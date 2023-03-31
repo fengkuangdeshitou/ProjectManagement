@@ -1,0 +1,83 @@
+PODS:
+  - AFNetworking (4.0.1):
+    - AFNetworking/NSURLSession (= 4.0.1)
+    - AFNetworking/Reachability (= 4.0.1)
+    - AFNetworking/Security (= 4.0.1)
+    - AFNetworking/Serialization (= 4.0.1)
+    - AFNetworking/UIKit (= 4.0.1)
+  - AFNetworking/NSURLSession (4.0.1):
+    - AFNetworking/Reachability
+    - AFNetworking/Security
+    - AFNetworking/Serialization
+  - AFNetworking/Reachability (4.0.1)
+  - AFNetworking/Security (4.0.1)
+  - AFNetworking/Serialization (4.0.1)
+  - AFNetworking/UIKit (4.0.1):
+    - AFNetworking/NSURLSession
+  - BRPickerView (2.8.0):
+    - BRPickerView/AddressPickerView (= 2.8.0)
+    - BRPickerView/Base (= 2.8.0)
+    - BRPickerView/DatePickerView (= 2.8.0)
+    - BRPickerView/StringPickerView (= 2.8.0)
+  - BRPickerView/AddressPickerView (2.8.0):
+    - BRPickerView/Base
+  - BRPickerView/Base (2.8.0)
+  - BRPickerView/DatePickerView (2.8.0):
+    - BRPickerView/Base
+  - BRPickerView/StringPickerView (2.8.0):
+    - BRPickerView/Base
+  - HXPhotoPicker (3.3.2):
+    - HXPhotoPicker/Default (= 3.3.2)
+  - HXPhotoPicker/Default (3.3.2)
+  - HXPhotoPicker/SDWebImage (3.3.2):
+    - SDWebImage (~> 5.0)
+  - IQKeyboardManager (6.5.10)
+  - MBProgressHUD (1.2.0)
+  - MJExtension (3.4.1)
+  - MJRefresh (3.7.5)
+  - SDWebImage (5.13.4):
+    - SDWebImage/Core (= 5.13.4)
+  - SDWebImage/Core (5.13.4)
+  - SGPagingView (2.1.0)
+  - TagListView (1.4.1)
+
+DEPENDENCIES:
+  - AFNetworking
+  - BRPickerView
+  - HXPhotoPicker
+  - HXPhotoPicker/SDWebImage
+  - IQKeyboardManager
+  - MBProgressHUD
+  - MJExtension
+  - MJRefresh
+  - SGPagingView
+  - TagListView
+
+SPEC REPOS:
+  trunk:
+    - AFNetworking
+    - BRPickerView
+    - HXPhotoPicker
+    - IQKeyboardManager
+    - MBProgressHUD
+    - MJExtension
+    - MJRefresh
+    - SDWebImage
+    - SGPagingView
+    - TagListView
+
+SPEC CHECKSUMS:
+  AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
+  BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
+  HXPhotoPicker: 3d0526bc46cd2a4510a777d5f57dfad8e683fcfd
+  IQKeyboardManager: 45a1fa55c1a5b02c61ac0fd7fd5b62bb4ad20d97
+  MBProgressHUD: 3ee5efcc380f6a79a7cc9b363dd669c5e1ae7406
+  MJExtension: 21c5f6f8c4d5d8844b7ae8fbae08fed0b501f961
+  MJRefresh: fdf5e979eb406a0341468932d1dfc8b7f9fce961
+  SDWebImage: e5cc87bf736e60f49592f307bdf9e157189298a3
+  SGPagingView: fb90c03c809363ea340189053c5635a128e1ef84
+  TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
+
+PODFILE CHECKSUM: 1e6a65235faf082a3c792a0a711d12c0afe4e6f4
+
+COCOAPODS: 1.11.3

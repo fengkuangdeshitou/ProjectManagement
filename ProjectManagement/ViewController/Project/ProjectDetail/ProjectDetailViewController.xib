@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProjectDetailViewController">
+            <connections>
+                <outlet property="nameLabel" destination="0jQ-jn-ctB" id="mT4-xB-Yrj"/>
+                <outlet property="tableView" destination="acw-SM-3dJ" id="ljd-sZ-AEi"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" translatesAutoresizingMaskIntoConstraints="NO" id="acw-SM-3dJ">
+                    <rect key="frame" x="0.0" y="59" width="393" height="759"/>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <view key="tableHeaderView" contentMode="scaleToFill" id="nZt-Q4-5nl">
+                        <rect key="frame" x="0.0" y="0.0" width="393" height="98"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="0jQ-jn-ctB">
+                                <rect key="frame" x="15" y="30" width="363" height="0.0"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="iqk-6S-jOs">
+                                <rect key="frame" x="15" y="87.666666666666671" width="363" height="0.3333333333333286"/>
+                                <color key="backgroundColor" red="0.89803921568627454" green="0.89803921568627454" blue="0.89803921568627454" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="0.5" id="1hQ-fv-vcr"/>
+                                </constraints>
+                            </view>
+                        </subviews>
+                        <viewLayoutGuide key="safeArea" id="hrf-Ti-WBW"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <constraints>
+                            <constraint firstItem="hrf-Ti-WBW" firstAttribute="trailing" secondItem="iqk-6S-jOs" secondAttribute="trailing" constant="15" id="2d4-47-Zx9"/>
+                            <constraint firstItem="hrf-Ti-WBW" firstAttribute="trailing" secondItem="0jQ-jn-ctB" secondAttribute="trailing" constant="15" id="3Hk-sD-7oB"/>
+                            <constraint firstAttribute="bottom" secondItem="iqk-6S-jOs" secondAttribute="bottom" constant="10" id="6y7-RQ-2As"/>
+                            <constraint firstItem="iqk-6S-jOs" firstAttribute="leading" secondItem="hrf-Ti-WBW" secondAttribute="leading" constant="15" id="Pl6-Of-2tV"/>
+                            <constraint firstItem="0jQ-jn-ctB" firstAttribute="top" secondItem="hrf-Ti-WBW" secondAttribute="top" constant="30" id="VTx-yV-iKt"/>
+                            <constraint firstItem="0jQ-jn-ctB" firstAttribute="leading" secondItem="hrf-Ti-WBW" secondAttribute="leading" constant="15" id="o5U-d4-ihY"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="blr-Kp-qRM"/>
+                        <outlet property="delegate" destination="-1" id="K1V-It-Stf"/>
+                    </connections>
+                </tableView>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="Q5M-cg-NOt"/>
+            <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+            <constraints>
+                <constraint firstItem="acw-SM-3dJ" firstAttribute="top" secondItem="Q5M-cg-NOt" secondAttribute="top" id="GWq-Ex-rCK"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="trailing" secondItem="acw-SM-3dJ" secondAttribute="trailing" id="JXw-jQ-Rwa"/>
+                <constraint firstItem="acw-SM-3dJ" firstAttribute="leading" secondItem="Q5M-cg-NOt" secondAttribute="leading" id="Ur5-hm-Uzb"/>
+                <constraint firstItem="Q5M-cg-NOt" firstAttribute="bottom" secondItem="acw-SM-3dJ" secondAttribute="bottom" id="YdH-uU-MT7"/>
+            </constraints>
+            <point key="canvasLocation" x="138" y="42"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>

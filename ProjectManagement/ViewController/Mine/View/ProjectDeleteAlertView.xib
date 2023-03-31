@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_12" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB" customClass="ProjectDeleteAlertView">
+            <rect key="frame" x="0.0" y="0.0" width="393" height="852"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="18l-UZ-0c2">
+                    <rect key="frame" x="15" y="345" width="363" height="162"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="确定要删除所选项目吗？" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ekF-Y5-XW1">
+                            <rect key="frame" x="20" y="30" width="179.66666666666666" height="22"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="22" id="FSQ-z3-H9f"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" weight="medium" pointSize="16"/>
+                            <nil key="textColor"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="eZ2-ip-58G">
+                            <rect key="frame" x="20" y="92" width="154" height="40"/>
+                            <color key="backgroundColor" red="0.95294117647058818" green="0.96078431372549022" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="40" id="fJF-L9-n98"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" title="取消">
+                                <color key="titleColor" red="0.33333333333333331" green="0.36078431372549019" blue="0.42745098039215684" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </state>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="20"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="dismiss" destination="iN0-l3-epB" eventType="touchUpInside" id="Osv-N1-vpc"/>
+                            </connections>
+                        </button>
+                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="jMW-Gg-6Gx">
+                            <rect key="frame" x="189" y="92" width="154" height="40"/>
+                            <color key="backgroundColor" red="0.97254901960784312" green="0.20784313725490194" blue="0.29803921568627451" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <inset key="imageEdgeInsets" minX="0.0" minY="0.0" maxX="2.2250738585072014e-308" maxY="0.0"/>
+                            <state key="normal" title="确认删除"/>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="20"/>
+                            </userDefinedRuntimeAttributes>
+                            <connections>
+                                <action selector="deleteAction:" destination="iN0-l3-epB" eventType="touchUpInside" id="bVt-jZ-ojL"/>
+                            </connections>
+                        </button>
+                    </subviews>
+                    <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                    <constraints>
+                        <constraint firstItem="eZ2-ip-58G" firstAttribute="leading" secondItem="18l-UZ-0c2" secondAttribute="leading" constant="20" id="1Ib-vy-t2V"/>
+                        <constraint firstItem="jMW-Gg-6Gx" firstAttribute="top" secondItem="eZ2-ip-58G" secondAttribute="top" id="24e-E5-QjB"/>
+                        <constraint firstItem="jMW-Gg-6Gx" firstAttribute="leading" secondItem="eZ2-ip-58G" secondAttribute="trailing" constant="15" id="6PZ-xn-wtn"/>
+                        <constraint firstItem="jMW-Gg-6Gx" firstAttribute="bottom" secondItem="eZ2-ip-58G" secondAttribute="bottom" id="8et-EJ-eGm"/>
+                        <constraint firstItem="jMW-Gg-6Gx" firstAttribute="width" secondItem="eZ2-ip-58G" secondAttribute="width" id="9Mh-tp-d2x"/>
+                        <constraint firstItem="ekF-Y5-XW1" firstAttribute="top" secondItem="18l-UZ-0c2" secondAttribute="top" constant="30" id="J2a-0e-FyX"/>
+                        <constraint firstAttribute="bottom" secondItem="eZ2-ip-58G" secondAttribute="bottom" constant="30" id="Pjm-QY-pHv"/>
+                        <constraint firstItem="ekF-Y5-XW1" firstAttribute="leading" secondItem="18l-UZ-0c2" secondAttribute="leading" constant="20" id="mci-Hi-OCz"/>
+                        <constraint firstAttribute="trailing" secondItem="jMW-Gg-6Gx" secondAttribute="trailing" constant="20" id="nYA-Pv-1lT"/>
+                        <constraint firstItem="eZ2-ip-58G" firstAttribute="top" secondItem="ekF-Y5-XW1" secondAttribute="bottom" constant="40" id="qWa-n2-QmM"/>
+                    </constraints>
+                    <userDefinedRuntimeAttributes>
+                        <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="10"/>
+                    </userDefinedRuntimeAttributes>
+                </view>
+            </subviews>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <color key="backgroundColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="18l-UZ-0c2" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" constant="15" id="Drt-QP-znM"/>
+                <constraint firstItem="vUN-kp-3ea" firstAttribute="trailing" secondItem="18l-UZ-0c2" secondAttribute="trailing" constant="15" id="Klo-nR-Klx"/>
+                <constraint firstItem="18l-UZ-0c2" firstAttribute="centerY" secondItem="iN0-l3-epB" secondAttribute="centerY" id="OWQ-mP-Agv"/>
+            </constraints>
+            <point key="canvasLocation" x="138" y="42"/>
+        </view>
+    </objects>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
+</document>
