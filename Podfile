@@ -17,8 +17,7 @@ pod 'MJRefresh'
 pod 'HXPhotoPicker'
 pod 'MBProgressHUD'
 pod 'BRPickerView'
-#pod 'BMKLocationKit'
-#pod 'BaiduMapKit/Map'
-#pod 'BaiduMapKit/Search'
+pod 'BaiduMapKit/Map'
+pod 'BaiduMapKit/Search'
 
 end
