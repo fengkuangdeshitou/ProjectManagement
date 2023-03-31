@@ -19,5 +19,6 @@ pod 'MBProgressHUD'
 pod 'BRPickerView'
 pod 'BaiduMapKit/Map'
 pod 'BaiduMapKit/Search'
+pod 'BMKLocationKit'
 
 end

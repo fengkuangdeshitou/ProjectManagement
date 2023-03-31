@@ -19,6 +19,7 @@ PODS:
     - BaiduMapKit/Base
   - BaiduMapKit/Search (6.5.5):
     - BaiduMapKit/Base
+  - BMKLocationKit (2.0.7)
   - BRPickerView (2.8.0):
     - BRPickerView/AddressPickerView (= 2.8.0)
     - BRPickerView/Base (= 2.8.0)
@@ -50,6 +51,7 @@ DEPENDENCIES:
   - AFNetworking
   - BaiduMapKit/Map
   - BaiduMapKit/Search
+  - BMKLocationKit
   - BRPickerView
   - HXPhotoPicker
   - HXPhotoPicker/SDWebImage
@@ -64,6 +66,7 @@ SPEC REPOS:
   trunk:
     - AFNetworking
     - BaiduMapKit
+    - BMKLocationKit
     - BRPickerView
     - HXPhotoPicker
     - IQKeyboardManager
@@ -77,6 +80,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   AFNetworking: 7864c38297c79aaca1500c33288e429c3451fdce
   BaiduMapKit: 3b79c1d77521fddfebfd62a5ab4663740bee5784
+  BMKLocationKit: a68845e2771bb3028feb638186d96124f4f142cd
   BRPickerView: a0ff460bf092bc069db5a54153395b1f7e8f5300
   HXPhotoPicker: 3d0526bc46cd2a4510a777d5f57dfad8e683fcfd
   IQKeyboardManager: 45a1fa55c1a5b02c61ac0fd7fd5b62bb4ad20d97
@@ -87,6 +91,6 @@ SPEC CHECKSUMS:
   SGPagingView: fb90c03c809363ea340189053c5635a128e1ef84
   TagListView: a1c236d17960a0cf64156725a76ce6d73ebce2be
 
-PODFILE CHECKSUM: 8cac25be4217fc399f5bc8570e1799e582b7b820
+PODFILE CHECKSUM: ac9bbc17144821fc968948bb5d083c1cc206f03f
 
 COCOAPODS: 1.11.3
