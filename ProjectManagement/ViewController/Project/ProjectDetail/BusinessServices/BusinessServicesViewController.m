@@ -9,13 +9,16 @@
 #import "ImagesTableViewCell.h"
 #import "ContentTableViewCell.h"
 @import BRPickerView;
+#import "BusinessFooterView.h"
+#import "MultipleSelectionView.h"
 
-@interface BusinessServicesViewController ()<UITextViewDelegate>
+@interface BusinessServicesViewController ()<UITextViewDelegate,UITableViewDataSource>
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
 @property(nonatomic,weak)IBOutlet UILabel * address;
 @property(nonatomic,weak)IBOutlet UIButton * selectBtn;
 @property(nonatomic,weak)IBOutlet UIButton * normalBtn;
+
 @property(nonatomic,assign) CGFloat beforHeight;
 @property(nonatomic,assign) CGFloat afterHeight;
 @property(nonatomic,strong) NSArray<ProjectModel*> * pcProjectEvaluationBasis;
@@ -25,6 +28,8 @@
 
 @property(nonatomic,strong) NSArray * befor;
 @property(nonatomic,strong) NSArray * after;
+@property(nonatomic,strong) BusinessFooterView * footer;
+@property(nonatomic,strong) NSArray<ProblemModel *> * problemArray;
 
 @end
 
@@ -40,23 +45,15 @@
     }
     self.model.projectId = self.detailModel.Id;
     self.model.subentryClassesSecondLevelId = self.detailModel.subentryClassesSecondLevelId;
-    
+
     self.address.text = self.detailModel.addressName;
     self.beforHeight = (SCREEN_WIDTH-60)/3;
     self.afterHeight = self.beforHeight;
-    if (self.type == 1){
-        if (self.model.abarbeitung != nil){
-            self.abarbeitung = self.model.abarbeitung.integerValue;
-            self.selectBtn.selected = false;
-            self.normalBtn.selected = true;
-        }else{
-            self.abarbeitung = 1;
-        }
-    }else if (self.type == 2){
-        self.tableView.tableHeaderView.height = 55;
-        self.tableView.tableHeaderView.clipsToBounds = true;
-    }else if (self.type == 3){
+    if (self.type == 3){
         self.tableView.tableHeaderView.height = 0.01;
+        self.tableView.tableHeaderView.clipsToBounds = true;
+    }else{
+        self.tableView.tableHeaderView.height = 55;
         self.tableView.tableHeaderView.clipsToBounds = true;
     }
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ImagesTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ImagesTableViewCell class])];
@@ -86,36 +83,6 @@
 }
 
 - (void)uploadParamsData{
-//    NSDictionary * params = @{
-//        @"abarbeitung":self.model.abarbeitung,
-//        @"afterUrl":self.model.afterUrl,
-//        @"askFor":self.model.askFor,
-//        @"basisContent":self.model.basisContent,
-//        @"basisId":self.model.basisId,
-//        @"beforeUrl":self.model.beforeUrl,
-//        @"conditionContent":self.model.conditionContent,
-//        @"conditionId":self.model.conditionId,
-//        @"projectId":self.model.projectId,
-//        @"subentryClassesSecondLevel":self.subentryClassesSecondLevel,
-//        @"type":self.model.type
-//    };
-//    NSDictionary * params = @{
-//        @"abarbeitung":@"1",
-//        @"afterUrl":@"/profile/upload/2023/03/09/236fc7c6-3011-4cb0-a757-43e0cfbe07bb_20230309205732A053.jpg",
-//        @"askFor":@"......",
-//        @"basisContent":@"Lorem ipsum dolor sit amet, consectetur adipiscing elit. ",
-//        @"basisId":@"1",
-//        @"beforeUrl":@"/profile/upload/2023/03/09/c84a336d-2620-486d-ae8b-5f0a4c005012_20230309205732A051.jpg",
-//        @"conditionContent":@"1231231",
-//        @"conditionId":@"10",
-//        @"isAllConfig":[NSNumber numberWithBool:false],
-//        @"projectId":@"38",
-//        @"subentryClassesSecondLevel":@"6",
-//        @"type":@"1"
-//    };
-    
-    
-    
     NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:[self.model mj_JSONObject]];
     [params removeObjectForKey:@"subentryClassesSecondLevelId"];
     [params removeObjectForKey:@"id"];
@@ -237,72 +204,54 @@
     if (textView.tag == 1){
         self.model.conditionContent = textView.text;
     }
-    if (textView.tag == 2){
-        if (self.type == 2){
-            self.model.suggest = textView.text;
-        }else{
-            self.model.askFor = textView.text;
-        }
-    }
-    if (textView.tag == 4){
-        self.model.basisContent = textView.text;
-    }
 }
 
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     if (textView.tag == 1){
         if (textView.text.length == 0){
-            if (!self.pcProjectEvaluationSituation){
-                [APIRequest.shareInstance getUrl:PcProjectEvaluationSituation params:@{@"id":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
-                    self.pcProjectEvaluationSituation = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-                    [self showPickerViewWithArray:self.pcProjectEvaluationSituation textView:textView];
-                } failure:^(NSString * _Nonnull errorMsg) {
-                    
-                }];
-            }else{
-                [self showPickerViewWithArray:self.pcProjectEvaluationSituation textView:textView];
-            }
-            return false;
-        }
-        return true;
-    }else if (textView.tag == 2){
-        if (textView.text.length == 0){
-            if (self.type == 1){
-                return true;
-            }else if (self.type == 3){
-                if (textView.text.length == 0){
-                    if (!self.pcProjectEvaluationBasis){
-                        [APIRequest.shareInstance getUrl:PcProjectEvaluationBasis params:@{} success:^(NSDictionary * _Nonnull result) {
-                            self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-                            [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-                        } failure:^(NSString * _Nonnull errorMsg) {
-                            
-                        }];
-                    }else{
-                        [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-                    }
-                    return false;
-                }
-            }
-        }
-        return true;
-    }else if (textView.tag == 4){
-        if (textView.text.length == 0){
             if (!self.pcProjectEvaluationBasis){
-                [APIRequest.shareInstance getUrl:PcProjectEvaluationBasis params:@{} success:^(NSDictionary * _Nonnull result) {
+                [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
                     self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-                    [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
+                    [self showMultipleSelectionViewWithTextField:textView dataArray:self.pcProjectEvaluationBasis];
                 } failure:^(NSString * _Nonnull errorMsg) {
                     
                 }];
             }else{
-                [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
+                [self showMultipleSelectionViewWithTextField:textView dataArray:self.pcProjectEvaluationBasis];
             }
             return false;
         }
         return true;
     }
     return false;
+}
+
+- (void)showMultipleSelectionViewWithTextField:(UITextView *)textView
+                                     dataArray:(NSArray *)dataArray{
+    MultipleSelectionView * selection = [[MultipleSelectionView alloc] init];
+    BRStringPickerView * picker = [[BRStringPickerView alloc] initWithPickerMode:BRStringPickerComponentSingle];
+//    picker.title = textField.placeholder;
+    picker.alertView.userInteractionEnabled = true;
+    selection.frame = CGRectMake(0, picker.pickerStyle.titleBarHeight, SCREEN_WIDTH, picker.alertView.height-picker.pickerStyle.titleBarHeight);
+    selection.dataArray = dataArray;
+    picker.resultModelBlock = ^(BRResultModel * _Nullable resultModel) {
+        NSMutableArray * contentArray = [[NSMutableArray alloc] init];
+        NSMutableArray * idArray = [[NSMutableArray alloc] init];
+
+        [selection.selectedArray enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [contentArray addObject:obj.name];
+            [idArray addObject:obj.Id];
+        }];
+        if (textView.tag == 1){
+//            self.model.basisId = self.pcProjectEvaluationBasis[resultModel.index].Id;
+            self.model.basisId = [idArray componentsJoinedByString:@","];
+            self.model.basisContent = [contentArray componentsJoinedByString:@"\n"];
+            [self getProblemArrayWithBasisIds:self.model.basisId];
+        }
+        textView.text = [contentArray componentsJoinedByString:@"\n"];
+    };
+    [picker show];
+    [picker.alertView addSubview:selection];
 }
 
 - (void)showPickerViewWithArray:(NSArray<ProjectModel*> *)dataArray
@@ -314,66 +263,72 @@
     [BRStringPickerView showPickerWithTitle:nil dataSourceArr:dataSource selectIndex:0 resultBlock:^(BRResultModel * _Nullable resultModel) {
         textView.text = dataArray[resultModel.index].content;
         if (textView.tag == 1){
-            self.model.conditionId = dataArray[resultModel.index].Id;
-            self.model.conditionContent = textView.text;
-        }else if (textView.tag == 4 || textView.tag == 2){
-            self.model.basisContent = textView.text;
             self.model.basisId = dataArray[resultModel.index].Id;
+            self.model.basisContent = textView.text;
+            [self getProblemArrayWithBasisIds:self.model.basisId];
         }
+    }];
+}
+
+- (void)getProblemArrayWithBasisIds:(NSString *)bid{
+    [APIRequest.shareInstance getUrl:Problem params:@{@"basisIds":bid} success:^(NSDictionary * _Nonnull result) {
+        self.problemArray = [ProblemModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        self.footer.dataArray = self.problemArray;
+    } failure:^(NSString * _Nonnull errorMsg) {
         
     }];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row == 0 || indexPath.row == 3){
+    if (indexPath.section == 0 || indexPath.section == 2 || indexPath.section == 4){
         ImagesTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ImagesTableViewCell class]) forIndexPath:indexPath];
-        cell.row = indexPath.row;
+        cell.row = indexPath.section;
         if (self.type == 1){
-            cell.titleLabel.text = indexPath.row == 0 ? @"上传整改前图片" : @"上传整改后图片";
+            cell.titleLabel.text = indexPath.section == 2 ? @"上传整改前图片" : @"上传整改后图片";
         }else if (self.type == 2){
             cell.titleLabel.text = @"上传评测图片";
         }else if (self.type == 3){
             cell.titleLabel.text = @"结果图片上传";
         }
-        cell.changeComplete = ^(NSArray * array,NSInteger row) {
-            if (row == 0){
+        cell.changeComplete = ^(NSArray * array,NSInteger section) {
+            if (section == 0){
                 self.befor = array;
             }else{
                 self.after = array;
             }
         };
-        cell.updateFrame = ^(CGFloat imageHeight,NSInteger row){
-            if (row == 0){
+        cell.updateFrame = ^(CGFloat imageHeight,NSInteger section){
+            if (section == 0){
                 self.beforHeight = imageHeight;
             }else{
                 self.afterHeight = imageHeight;
             }
-            [tableView beginUpdates];
-            [tableView endUpdates];
+            [UIView performWithoutAnimation:^{
+                [tableView beginUpdates];
+                [tableView endUpdates];
+            }];
         };
-        if (indexPath.row == 0){
+        if (indexPath.section == 0){
             if (self.type == 2){
                 cell.images = self.model.evaluationUrl;
-            }else{
-                cell.images = self.model.beforeUrl;
-            }
-        }else{
-            if (self.type == 1){
-                cell.images = self.model.afterUrl;
             }else if (self.type == 3){
                 cell.images = self.model.resultUrl;
             }
+        }else if (indexPath.section == 2){
+            cell.images = self.model.beforeUrl;
+        }else{
+            cell.images = self.model.afterUrl;
         }
         return cell;
     }else{
         ContentTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ContentTableViewCell class]) forIndexPath:indexPath];
         cell.descCell.content.delegate = self;
-        cell.descCell.content.tag = indexPath.row;
-        if (indexPath.row == 1){
-            cell.titleLabel.text = @"评测情况";
-            cell.descCell.content.placeholder = @"请输入评测情况";
-            cell.descCell.content.text = self.model.conditionContent;
-        }else if (indexPath.row == 2){
+        cell.descCell.content.tag = indexPath.section;
+        if (indexPath.section == 1){
+            cell.titleLabel.text = @"评测依据";
+            cell.descCell.content.placeholder = @"请选择（根据分类选择编号，带出依据，可多选）";
+            cell.descCell.content.text = self.model.basisContent;
+        }else if (indexPath.section == 3){
             cell.descCell.content.placeholder = @"请输入整改建议";
             if (self.type == 1){
                 cell.titleLabel.text = @"整改要求";
@@ -381,54 +336,54 @@
             }else if (self.type == 2){
                 cell.titleLabel.text = @"整改建议";
                 cell.descCell.content.text = self.model.suggest;
-            }else if (self.type == 3){
-                cell.titleLabel.text = @"评测依据";
-                cell.descCell.content.text = self.model.basisContent;
             }
-        }else if (indexPath.row == 4){
-            cell.descCell.content.placeholder = @"请选择";
-            cell.titleLabel.text = @"评测依据";
-            cell.descCell.content.text = self.model.basisContent;
         }
         return cell;
     }
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    NSArray * array = [self.detailModel.subentryClassesSecondLevelEvaluation filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"Id == %@",self.subentryClassesSecondLevel]];
+    if (array.count > 0){
+        ProjectModel * model = array.firstObject;
+        return model.evaluation ? 5 : 2;
+    }
+    return  2;
+}
+
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    return 5;
+    return 1;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    if (indexPath.row == 0){
-        if ((self.type == 1 && self.abarbeitung == 0) || self.type == 3){
+    if (indexPath.section == 0){
+        if (self.type == 1){
             return 0.01;
         }
         return self.beforHeight+47;
-    }else if (indexPath.row == 1){
-        return 132;
-    }else if (indexPath.row == 2){
-        if (self.type == 1 && self.abarbeitung == 0){
-            return 0.01;
-        }
-        return 132;
-    }else if (indexPath.row == 3){
-        if ((self.type == 1 && self.abarbeitung == 0) || self.type == 2){
-            return 0.01;
+    }else if (indexPath.section == 1){
+        return 200;
+    }else if (indexPath.section == 2){
+        if (self.type == 1){
+            return self.beforHeight+47;
         }else{
-            return self.afterHeight+47;
-        }
-    }else if (indexPath.row == 4){
-        if (self.type == 3){
             return 0.01;
         }
+    }else if (indexPath.section == 3){
         return 132;
+    }else if (indexPath.section == 4){
+        if (self.type == 1){
+            return self.afterHeight+47;
+        }else{
+            return 0.01;
+        }
     }else{
         return 132;
     }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
-    return 10;
+    return section == 0 ? 10 : 0.01;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
@@ -438,11 +393,28 @@
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForFooterInSection:(NSInteger)section{
+    if (section == 1){
+        if(!self.footer){
+            self.footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.footer.tableView.contentSize.height == 0 ? 200 : self.footer.tableView.contentSize.height)];
+        }
+        self.footer.dataArray = self.problemArray;
+        self.footer.tableViewContentHeightCompletion = ^(CGFloat height){
+            [UIView performWithoutAnimation:^{
+                [tableView beginUpdates];
+                [tableView endUpdates];
+            }];
+        };
+        return self.footer;
+    }
     return UIView.new;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
-    return 0.01;
+    if (section == 1){
+        return self.footer.tableView.contentSize.height;
+    }else{
+        return 0.01;
+    }
 }
 /*
 #pragma mark - Navigation

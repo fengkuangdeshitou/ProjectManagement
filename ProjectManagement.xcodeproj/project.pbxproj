@@ -69,6 +69,10 @@
 		BD0C628B293A2C1100B491F0 /* ProjectDeleteAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0C628A293A2C1100B491F0 /* ProjectDeleteAlertView.xib */; };
 		BD88B38629377CDD003FD31F /* ProjectContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD88B38529377CDD003FD31F /* ProjectContainerView.m */; };
 		BDB56A652969A83800993F7A /* ProjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDB56A642969A83800993F7A /* ProjectModel.m */; };
+		BDD4C32F29D7236500C542C4 /* BusinessFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */; };
+		BDD4C33229D8086100C542C4 /* ProblemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C33129D8086100C542C4 /* ProblemModel.m */; };
+		BDD4C33629D8303F00C542C4 /* BusinessInputTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C33429D8303F00C542C4 /* BusinessInputTableViewCell.m */; };
+		BDD4C33729D8303F00C542C4 /* BusinessInputTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDD4C33529D8303F00C542C4 /* BusinessInputTableViewCell.xib */; };
 		BDDB3BF529B9FCEB0005B131 /* AllEvaluationViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BDDB3BF329B9FCEB0005B131 /* AllEvaluationViewController.m */; };
 		BDDB3BF629B9FCEB0005B131 /* AllEvaluationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BDDB3BF429B9FCEB0005B131 /* AllEvaluationViewController.xib */; };
 		BDE4726329364BC900C49D11 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = BDE4726229364BC900C49D11 /* AppDelegate.m */; };
@@ -198,6 +202,13 @@
 		BD88B38529377CDD003FD31F /* ProjectContainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectContainerView.m; sourceTree = "<group>"; };
 		BDB56A632969A83800993F7A /* ProjectModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectModel.h; sourceTree = "<group>"; };
 		BDB56A642969A83800993F7A /* ProjectModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectModel.m; sourceTree = "<group>"; };
+		BDD4C32D29D7236500C542C4 /* BusinessFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BusinessFooterView.h; sourceTree = "<group>"; };
+		BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BusinessFooterView.m; sourceTree = "<group>"; };
+		BDD4C33029D8086100C542C4 /* ProblemModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProblemModel.h; sourceTree = "<group>"; };
+		BDD4C33129D8086100C542C4 /* ProblemModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProblemModel.m; sourceTree = "<group>"; };
+		BDD4C33329D8303F00C542C4 /* BusinessInputTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BusinessInputTableViewCell.h; sourceTree = "<group>"; };
+		BDD4C33429D8303F00C542C4 /* BusinessInputTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BusinessInputTableViewCell.m; sourceTree = "<group>"; };
+		BDD4C33529D8303F00C542C4 /* BusinessInputTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BusinessInputTableViewCell.xib; sourceTree = "<group>"; };
 		BDDB3BF229B9FCEB0005B131 /* AllEvaluationViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AllEvaluationViewController.h; sourceTree = "<group>"; };
 		BDDB3BF329B9FCEB0005B131 /* AllEvaluationViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AllEvaluationViewController.m; sourceTree = "<group>"; };
 		BDDB3BF429B9FCEB0005B131 /* AllEvaluationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AllEvaluationViewController.xib; sourceTree = "<group>"; };
@@ -251,6 +262,11 @@
 				0F0C66272939A1700083D8C6 /* ContentTableViewCell.h */,
 				0F0C66282939A1700083D8C6 /* ContentTableViewCell.m */,
 				0F0C66292939A1700083D8C6 /* ContentTableViewCell.xib */,
+				BDD4C32D29D7236500C542C4 /* BusinessFooterView.h */,
+				BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */,
+				BDD4C33329D8303F00C542C4 /* BusinessInputTableViewCell.h */,
+				BDD4C33429D8303F00C542C4 /* BusinessInputTableViewCell.m */,
+				BDD4C33529D8303F00C542C4 /* BusinessInputTableViewCell.xib */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -484,6 +500,8 @@
 			children = (
 				BDB56A632969A83800993F7A /* ProjectModel.h */,
 				BDB56A642969A83800993F7A /* ProjectModel.m */,
+				BDD4C33029D8086100C542C4 /* ProblemModel.h */,
+				BDD4C33129D8086100C542C4 /* ProblemModel.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -711,6 +729,7 @@
 				0F9367AB2938A1F500B421AB /* ProjectDescTableViewCell.xib in Resources */,
 				0F0C662B2939A1700083D8C6 /* ContentTableViewCell.xib in Resources */,
 				0F73D46229374E110003FED1 /* NewProjectViewController.xib in Resources */,
+				BDD4C33729D8303F00C542C4 /* BusinessInputTableViewCell.xib in Resources */,
 				BD0C62612937A07C00B491F0 /* UserInfoViewController.xib in Resources */,
 				0F9367BC2938C16200B421AB /* AuditTableViewCell.xib in Resources */,
 				0F58CE4729D6B8F700E66A0D /* LocationTableViewCell.xib in Resources */,
@@ -793,6 +812,7 @@
 				BDE4726329364BC900C49D11 /* AppDelegate.m in Sources */,
 				BD0C6286293A25A000B491F0 /* UITextView+Placeholder.m in Sources */,
 				0F58CE4B29D6BAD600E66A0D /* MLDataSource.m in Sources */,
+				BDD4C33629D8303F00C542C4 /* BusinessInputTableViewCell.m in Sources */,
 				BD0C6289293A2BEF00B491F0 /* ProjectDeleteAlertView.m in Sources */,
 				0F58CE5529D6CA7800E66A0D /* LocationViewController.m in Sources */,
 				0F58CE4629D6B8F700E66A0D /* LocationTableViewCell.m in Sources */,
@@ -806,7 +826,9 @@
 				BD0C62762937B3D000B491F0 /* UIHelper.m in Sources */,
 				0F0C66252938CE820083D8C6 /* ImagesTableViewCell.m in Sources */,
 				BD0C62792938F91600B491F0 /* ProjectDetailFooterView.m in Sources */,
+				BDD4C32F29D7236500C542C4 /* BusinessFooterView.m in Sources */,
 				0F73D467293752080003FED1 /* InputTableViewCell.m in Sources */,
+				BDD4C33229D8086100C542C4 /* ProblemModel.m in Sources */,
 				0F9367A529385E8700B421AB /* ProjectTagTableViewCell.m in Sources */,
 				BDB56A652969A83800993F7A /* ProjectModel.m in Sources */,
 				0F0C662A2939A1700083D8C6 /* ContentTableViewCell.m in Sources */,

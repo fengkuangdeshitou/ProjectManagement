@@ -49,4 +49,10 @@ NSString * const PcProjectEvaluationSituation = @"app/evaluation/getPcProjectEva
 
 NSString * const PcProjectEvaluationConclusion = @"app/evaluation/getPcProjectEvaluationConclusion";
 
+NSString * const ProjectEvaluationSituation = @"app/evaluation/getProjectEvaluationSituation";
+
+NSString * const Problem = @"app/problem/getProblem";
+
+NSString * const BasisListToProject = @"app/problem/getBasisListToProject";
+
 @end

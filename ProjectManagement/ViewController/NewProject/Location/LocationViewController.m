@@ -6,14 +6,16 @@
 //
 
 #import "LocationViewController.h"
+#import <BaiduMapAPI_Base/BMKBaseComponent.h>
+#import <BaiduMapAPI_Search/BMKSearchComponent.h>
 
 static NSString *annotationViewIdentifier = @"PinAnnotation";
 
-@interface LocationViewController ()<BMKMapViewDelegate,BMKLocationManagerDelegate>
+@interface LocationViewController ()<BMKMapViewDelegate,BMKLocationManagerDelegate,BMKGeoCodeSearchDelegate>
 
 @property (nonatomic, strong) BMKMapView *mapView;
 @property (nonatomic, strong) BMKPointAnnotation *annotation; //当前界面的标注
-
+@property (nonatomic, strong) BMKGeoCodeSearch *search;
 @end
 
 @implementation LocationViewController
@@ -60,6 +62,14 @@ static NSString *annotationViewIdentifier = @"PinAnnotation";
         _mapView = [[BMKMapView alloc] initWithFrame:self.view.bounds];
     }
     return _mapView;
+}
+
+- (BMKGeoCodeSearch *)search{
+    if(!_search){
+        _search = [[BMKGeoCodeSearch alloc] init];
+    }
+    _search.delegate = self;
+    return _search;
 }
 
 - (void)viewDidLoad {
@@ -175,8 +185,19 @@ static NSString *annotationViewIdentifier = @"PinAnnotation";
     self.annotation.screenPointToLock = self.mapView.center;
     [self.locationManager stopUpdatingLocation];
     [self.locationManager stopUpdatingHeading];
-
 }
+
+- (void)onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result:(BMKReverseGeoCodeSearchResult *)result errorCode:(BMKSearchErrorCode)error {
+    if (error == BMK_SEARCH_NO_ERROR) {
+        //在此处理正常结果
+        if (self.locationCompletion){
+            self.locationCompletion(self.mapView.centerCoordinate,result.address);
+        }
+    } else {
+        NSLog(@"检索失败");
+    }
+}
+
 
 - (void)didUpdateBMKUserLocation:(BMKUserLocation *) userLocation{
     [self.mapView updateLocationData:userLocation];
@@ -184,6 +205,16 @@ static NSString *annotationViewIdentifier = @"PinAnnotation";
 
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated reason:(BMKRegionChangeReason)reason{
     self.centerCoordinate = mapView.centerCoordinate;
+    BMKReverseGeoCodeSearchOption *reverseGeoCodeOption = [[BMKReverseGeoCodeSearchOption alloc]init];
+    reverseGeoCodeOption.location = self.mapView.centerCoordinate;
+    // 是否访问最新版行政区划数据（仅对中国数据生效）
+    reverseGeoCodeOption.isLatestAdmin = YES;
+    BOOL flag = [self.search reverseGeoCode: reverseGeoCodeOption];
+    if (flag) {
+        NSLog(@"逆geo检索发送成功");
+    }  else  {
+        NSLog(@"逆geo检索发送失败");
+    }
 }
 /*
 #pragma mark - Navigation

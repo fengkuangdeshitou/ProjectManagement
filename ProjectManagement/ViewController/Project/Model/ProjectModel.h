@@ -6,6 +6,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "ProblemModel.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -20,6 +21,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * constructionUnit;
 /// 项目地址名称
 @property(nonatomic,strong) NSString * addressName;
+@property(nonatomic,strong) NSString * address;
 /// 项目综述
 @property(nonatomic,strong) NSString * review;
 /// 状态（0评测中 1审核中 2 审核通过 3 审核未通过）
@@ -28,6 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * source;
 /// 项目类型(1使用评测 2督导评测 3设计评估)
 @property(nonatomic,strong) NSString * type;
+@property(nonatomic,strong) NSString * serialNumber;
 @property(nonatomic,strong) NSString * contacts;
 @property(nonatomic,strong) NSString * phone;
 @property(nonatomic,strong) NSString * content;
@@ -85,6 +88,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * subentryClassesSecondLevelId;
 @property(nonatomic,strong) NSString * groupId;
 @property(nonatomic,strong) NSArray<NSString *> * classesSecondLevelList;
+@property(nonatomic,strong) NSArray<ProblemModel *> * optionContent;
 
 @end
 

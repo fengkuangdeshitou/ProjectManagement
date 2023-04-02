@@ -51,7 +51,14 @@ extern NSString * const PcProjectEvaluationSituation;
 
 extern NSString * const PcProjectEvaluationConclusion;
 
+extern NSString * const ProjectEvaluationSituation;
+
+extern NSString * const Problem;
+
+extern NSString * const BasisListToProject;
+
 
 @end
 
 NS_ASSUME_NONNULL_END
+

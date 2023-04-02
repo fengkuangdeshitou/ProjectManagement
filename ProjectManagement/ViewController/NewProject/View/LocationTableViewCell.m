@@ -9,7 +9,7 @@
 #import "MLAutoCompleteCell.h"
 #import "MLDataSource.h"
 
-@interface LocationTableViewCell ()
+@interface LocationTableViewCell ()<UITextFieldDelegate,BMKGeoCodeSearchDelegate>
 
 @property(nonatomic,strong) MLDataSource * autocompleteDataSource;
 
@@ -22,12 +22,12 @@
     [super awakeFromNib];
     // Initialization code
     self.autocompleteDataSource = [[MLDataSource alloc] init];
-    self.textField.delegate = self.autocompleteDataSource;
+    self.textField.returnKeyType = UIReturnKeyDone;
     self.textField.maximumNumberOfAutoCompleteRows = 5;
     self.textField.autoCompleteDataSource = self.autocompleteDataSource;
     [self.textField setAutoCompleteTableAppearsAsKeyboardAccessory:YES];
     [self.textField registerAutoCompleteCellClass:[MLAutoCompleteCell class]
-               forCellReuseIdentifier:@"CustomCellId"];
+                           forCellReuseIdentifier:@"CustomCellId"];
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

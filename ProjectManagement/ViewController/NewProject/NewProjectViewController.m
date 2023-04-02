@@ -15,17 +15,22 @@
 #import "ImagesTableViewCell.h"
 #import "LocationTableViewCell.h"
 #import "LocationViewController.h"
+#import "MLPAutoCompleteTextField.h"
+#import <BaiduMapAPI_Base/BMKBaseComponent.h>
+#import <BaiduMapAPI_Search/BMKSearchComponent.h>
 
-@interface NewProjectViewController ()<UITextFieldDelegate>
+@interface NewProjectViewController ()<UITextFieldDelegate,UITextViewDelegate,BMKGeoCodeSearchDelegate>
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
-@property(nonatomic,strong)IBOutlet NSArray * dataArray;
+@property(nonatomic,strong) NSMutableArray * dataArray;
 @property(nonatomic,strong) ProjectModel * model;
 @property(nonatomic,strong) NSArray<ProjectModel*> * classesArray;
 @property(nonatomic,strong) NSArray<ProjectModel*> * classesSecondArray;
 @property(nonatomic,strong) NSArray<ProjectModel*> * projectGroup;
 @property(nonatomic,strong) NSArray<ProjectModel*> * projectSubentry;
 @property(nonatomic,strong) NSArray<ProjectModel*> * projectSubentrySecondLevel;
+@property(nonatomic,strong) NSArray<ProjectModel*> * projectEvaluationSituation;;
+
 @property(nonatomic,strong) NSArray * images;
 @property(nonatomic,assign) CGFloat imagesCellHeight;
 
@@ -38,7 +43,7 @@
     // Do any additional setup after loading the view from its nib.
     self.title = @"新建项目";
     self.model = [[ProjectModel alloc] init];
-    self.dataArray = @[
+    self.dataArray = [NSMutableArray arrayWithArray:@[
         @{@"title":@"项目名称",@"placeholder":@"请输入",@"value":@"",@"type":@"input"},
         @{@"title":@"项目类型",@"placeholder":@"请选择",@"value":@"",@"type":@"select"},
         @{@"title":@"项目类别",@"placeholder":@"请选择",@"value":@"",@"type":@"select"},
@@ -52,8 +57,10 @@
         @{@"title":@"",@"placeholder":@"请输入项目综述",@"value":@"",@"type":@"desc"},
         @{@"title":@"项目分项类别",@"placeholder":@"请选择",@"value":@"",@"type":@"select"},
         @{@"title":@"项目二级分项类别评测",@"placeholder":@"请选择",@"value":@"",@"type":@"select"},
+        @{@"title":@"关联评测依据",@"placeholder":@"请选择（多选）",@"value":@"",@"type":@"select"},
+        @{@"title":@"evaluationSituation",@"placeholder":@"请输入项目综述",@"value":@"",@"type":@"desc"},
         @{@"title":@"上传图片",@"placeholder":@"",@"value":@"",@"type":@"image"}
-    ];
+    ]];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([InputTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([InputTableViewCell class])];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([SelectTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([SelectTableViewCell class])];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ProjectDescTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ProjectDescTableViewCell class])];
@@ -224,6 +231,18 @@
             
         }];
         return false;
+    }else if (textField.tag == 13){
+        if (!self.model.subentryClassesSecondLevelId){
+            [UIHelper showToast:@"请选择项目分项二级类别" toView:self.view];
+            return false;
+        }
+        [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.model.subentryClassesSecondLevelId} success:^(NSDictionary * _Nonnull result) {
+            self.projectEvaluationSituation = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+            [self showMultipleSelectionViewWithTextField:textField dataArray:self.projectEvaluationSituation];
+        } failure:^(NSString * _Nonnull errorMsg) {
+            
+        }];
+        return false;
     }
     return true;
 }
@@ -238,11 +257,47 @@
         self.model.constructionUnit = textField.text;
     }else if (textField.tag == 6){
         self.model.addressName = textField.text;
+        BMKGeoCodeSearch *search = [[BMKGeoCodeSearch alloc] init];
+        search.delegate = self;
+        BMKGeoCodeSearchOption *geoCodeSearchOption = [[BMKGeoCodeSearchOption alloc]init];
+        geoCodeSearchOption.address = textField.text;
+        geoCodeSearchOption.city = textField.text;
+        BOOL flag = [search geoCode: geoCodeSearchOption];
+        if (flag) {
+            NSLog(@"geo检索发送成功");
+        }  else  {
+            NSLog(@"geo检索发送失败");
+        }
     }else if (textField.tag == 7){
         self.model.contacts = textField.text;
     }else if (textField.tag == 8){
         self.model.phone = textField.text;
     }
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField{
+    if ([textField isKindOfClass:[MLPAutoCompleteTextField class]]){
+        [textField resignFirstResponder];
+    }
+    return true;
+}
+
+- (void)onGetGeoCodeResult:(BMKGeoCodeSearch *)searcher result:(BMKGeoCodeSearchResult *)result errorCode:(BMKSearchErrorCode)error {
+    if (error == BMK_SEARCH_NO_ERROR) {
+        //在此处理正常结果
+        self.model.address = [NSString stringWithFormat:@"%.06f,%.06f",result.location.longitude,result.location.latitude];
+        NSLog(@"===%@",self.model.address);
+    } else {
+        NSLog(@"检索失败");
+        
+    }
+}
+
+- (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
+    if (textView.tag == self.dataArray.count-2){
+        return false;
+    }
+    return true;
 }
 
 - (void)showMultipleSelectionViewWithTextField:(UITextField *)textField
@@ -269,6 +324,17 @@
             self.model.subentryClassesId = [idArray componentsJoinedByString:@","];
         }else if (textField.tag == 12){
             self.model.subentryClassesSecondLevelId = [idArray componentsJoinedByString:@","];
+        }else if (textField.tag == 13){
+            self.model.basisId = [idArray componentsJoinedByString:@","];
+            __block NSString * evaluationSituation = @"";
+            [self.projectEvaluationSituation enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                evaluationSituation = [evaluationSituation stringByAppendingFormat:@"%@", [NSString stringWithFormat:@"%@-%@\n%@\n\n",obj.name,obj.serialNumber,obj.content]];
+            }];
+            evaluationSituation = [evaluationSituation substringToIndex:evaluationSituation.length-2];
+            NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[textField.tag+1]];
+            [params setValue:evaluationSituation forKey:@"value"];
+            [self.dataArray replaceObjectAtIndex:textField.tag+1 withObject:params];
+            [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:textField.tag+1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
         }
         textField.text = [contentArray componentsJoinedByString:@","];
     };
@@ -311,7 +377,7 @@
         cell.textField.delegate = self;
         cell.textField.tag = indexPath.row;
         cell.textField.autoCompleteTableBackgroundColor = UIColor.whiteColor;
-        [cell.btn addTarget:self action:@selector(locationAction) forControlEvents:UIControlEventTouchUpInside];
+        [cell.btn addTarget:self action:@selector(locationAction:) forControlEvents:UIControlEventTouchUpInside];
         return cell;
     }else if ([item[@"type"] isEqualToString:@"select"]){
         SelectTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([SelectTableViewCell class]) forIndexPath:indexPath];
@@ -337,13 +403,21 @@
         ProjectDescTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ProjectDescTableViewCell class]) forIndexPath:indexPath];
         cell.content.placeholder = @"请输入项目综述";
         cell.content.tag = indexPath.row;
+        cell.content.text = [item[@"value"] length] > 0 ? item[@"value"] : @"";
+        cell.content.delegate = self;
         return cell;
     }
 }
 
-- (void)locationAction{
+- (void)locationAction:(UIButton *)btn{
+    LocationTableViewCell * cell = (LocationTableViewCell *)btn.superview.superview;
     LocationViewController * location = [[LocationViewController alloc] init];
     location.title = @"位置";
+    location.locationCompletion = ^(CLLocationCoordinate2D centerCoordinate,NSString * addressName) {
+        cell.textField.text = addressName;
+        self.model.addressName = addressName;
+        self.model.address = [NSString stringWithFormat:@"%.06f,%.06f",centerCoordinate.longitude,centerCoordinate.latitude];
+    };
     location.hidesBottomBarWhenPushed = true;
     [self.navigationController pushViewController:location animated:true];
 }
@@ -355,7 +429,18 @@
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSDictionary * item = self.dataArray[indexPath.row];
     if ([item[@"type"] isEqualToString:@"desc"]){
-        return 82;
+        NSString * title = item[@"title"];
+        if ([title isEqualToString:@"evaluationSituation"]){
+            NSString * value = item[@"value"];
+            CGFloat valueHeight = [value boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-50, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]} context:nil].size.height;
+            if (value.length > 0){
+                return valueHeight > 300 ? 300 : valueHeight;
+            }else{
+                return 0.01;
+            }
+        }else{
+            return 82;
+        }
     }else if ([item[@"type"] isEqualToString:@"image"]){
         if (self.model.type.intValue == 3){
             return self.imagesCellHeight+47;

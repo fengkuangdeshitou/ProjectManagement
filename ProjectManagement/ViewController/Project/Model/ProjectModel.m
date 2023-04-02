@@ -17,7 +17,8 @@
 
 + (NSDictionary *)mj_objectClassInArray{
     return @{
-        @"subentryClassesSecondLevelEvaluation":[self class]
+        @"subentryClassesSecondLevelEvaluation":[self class],
+        @"childProblems":[ProblemModel class]
     };
 }
 

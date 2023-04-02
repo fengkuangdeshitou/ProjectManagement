@@ -129,21 +129,22 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     [self.view endEditing:true];
     if (textView.tag == 7){
-        if (textView.text.length == 0){
-            if (!self.pcProjectEvaluationBasis){
-                [APIRequest.shareInstance getUrl:PcProjectEvaluationBasis params:@{} success:^(NSDictionary * _Nonnull result) {
-                    self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-                    [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-                } failure:^(NSString * _Nonnull errorMsg) {
-                    
-                }];
-            }else{
-                [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-            }
-            return false;
-        }else{
-            return true;
-        }
+//        if (textView.text.length == 0){
+//            if (!self.pcProjectEvaluationBasis){
+//                [APIRequest.shareInstance getUrl:PcProjectEvaluationBasis params:@{} success:^(NSDictionary * _Nonnull result) {
+//                    self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+//                    [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
+//                } failure:^(NSString * _Nonnull errorMsg) {
+//
+//                }];
+//            }else{
+//                [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
+//            }
+//            return false;
+//        }else{
+//            return true;
+//        }
+        return false;
     }
     if (textView.tag == 9){
         if (textView.text.length == 0){
