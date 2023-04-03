@@ -55,4 +55,7 @@ NSString * const Problem = @"app/problem/getProblem";
 
 NSString * const BasisListToProject = @"app/problem/getBasisListToProject";
 
+NSString * const EvaluatingDetails = @"app/evaluation/getEvaluatingDetails";
+
+
 @end

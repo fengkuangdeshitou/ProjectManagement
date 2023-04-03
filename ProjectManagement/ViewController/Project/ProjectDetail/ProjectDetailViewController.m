@@ -16,11 +16,12 @@
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
 @property(nonatomic,weak)IBOutlet UILabel * nameLabel;
-@property(nonatomic,strong) NSArray * dataArray;
+@property(nonatomic,strong) NSMutableArray * dataArray;
 @property(nonatomic,assign) CGFloat intrinsicContentHeight;
 @property(nonatomic,strong) ProjectDetailFooterView * footerView;
 @property(nonatomic,strong) NSString * Id;
 @property(nonatomic,strong) ProjectModel * model;
+@property(nonatomic,strong) NSString * basisContent;
 
 @end
 
@@ -30,6 +31,7 @@
     self = [super init];
     if (self) {
         self.Id = Id;
+        self.basisContent = @"";
     }
     return self;
 }
@@ -58,7 +60,7 @@
     [APIRequest.shareInstance getUrl:ProjectDetail params:@{@"projectId":self.Id} success:^(NSDictionary * _Nonnull result) {
         self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
         self.nameLabel.text = self.model.name;
-        self.dataArray = @[
+        self.dataArray = [NSMutableArray arrayWithArray:@[
             @{@"title":@"项目类型",@"value":self.model.type.intValue == 1 ? @"使用评测" : (self.model.type.intValue == 2 ? @"督导评测" : @"设计评估"),@"type":@"info"},
             @{@"title":@"项目类别",@"value":self.model.classesNames,@"type":@"info"},
             @{@"title":@"项目二级类别",@"value":@"",@"type":@"info"},
@@ -71,10 +73,31 @@
             @{@"title":@"项目综述",@"value":@"",@"type":@"info"},
             @{@"title":@"",@"value":self.model.review,@"type":@"desc"},
             @{@"title":@"项目分项类别",@"value":[self.model.subentryClassesList componentsJoinedByString:@","],@"type":@"info"},
+            @{@"title":@"关联评测依据",@"placeholder":@"",@"value":@"",@"type":@"info"},
+            @{@"title":@"关联评测依据",@"placeholder":@"",@"value":@"",@"type":@"desc"},
             @{@"title":@"项目二级分项类别评测",@"value":@"",@"type":@"info"}
-        ];
+        ]];
         self.footerView.subentryClassesSecondLevelEvaluation = self.model.subentryClassesSecondLevelEvaluation;
         self.footerView.detailModel = self.model;
+        [self getBasisListToProjectData];
+    } failure:^(NSString * _Nonnull errorMsg) {
+        
+    }];
+}
+
+- (void)getBasisListToProjectData{
+    [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.Id} success:^(NSDictionary * _Nonnull result) {
+        NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        if (modelArray.count > 0){
+            for (int i=0; i<modelArray.count; i++) {
+                ProjectModel * model = modelArray[i];
+                self.basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",self.basisContent,model.name,model.serialNumber,model.content];
+            }
+            self.basisContent = [self.basisContent substringToIndex:self.basisContent.length-1];
+            NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[self.dataArray.count-2]];
+            [dict setValue:self.basisContent forKey:@"value"];
+            [self.dataArray replaceObjectAtIndex:self.dataArray.count-2 withObject:dict];
+        }
         [self.tableView reloadData];
     } failure:^(NSString * _Nonnull errorMsg) {
         
@@ -119,7 +142,20 @@
     if ([item[@"type"] isEqualToString:@"tag"]){
         return self.intrinsicContentHeight;
     }else if ([item[@"type"] isEqualToString:@"desc"]){
-        return 82;
+        if ([item[@"title"] isEqualToString:@"关联评测依据"]){
+            if (self.basisContent.length == 0){
+                return 0.01;
+            }else{
+                CGFloat height = [self.basisContent boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-60, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]} context:nil].size.height+10;
+                return height;
+            }
+        }else{
+            return 82;
+        }
+    }else if ([item[@"type"] isEqualToString:@"info"]){
+        if ([item[@"title"] isEqualToString:@"关联评测依据"] && self.basisContent.length == 0){
+            return 0.01;
+        }
     }
     return 40;
 }

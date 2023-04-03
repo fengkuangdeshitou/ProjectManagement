@@ -58,6 +58,38 @@
     }
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ImagesTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ImagesTableViewCell class])];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ContentTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ContentTableViewCell class])];
+    [self getEvaluatingDetails];
+    [self getBasisListToProjectData];
+}
+
+- (void)getEvaluatingDetails{
+    [APIRequest.shareInstance getUrl:EvaluatingDetails params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
+        
+    } failure:^(NSString * _Nonnull errorMsg) {
+        
+    }];
+}
+
+- (void)getBasisListToProjectData{
+    [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
+        NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        NSString * basisContent = @"";
+        NSMutableArray * idArray = [[NSMutableArray alloc] init];
+        if (modelArray.count > 0){
+            for (int i=0; i<modelArray.count; i++) {
+                ProjectModel * model = modelArray[i];
+                basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",basisContent,model.name,model.serialNumber,model.content];
+                [idArray addObject:model.Id];
+            }
+            basisContent = [basisContent substringToIndex:basisContent.length-1];
+            self.model.basisContent = basisContent;
+            self.model.basisId = [idArray componentsJoinedByString:@","];
+            [self.tableView reloadData];
+            [self getProblemArrayWithBasisIds:self.model.basisId];
+        }
+    } failure:^(NSString * _Nonnull errorMsg) {
+        
+    }];
 }
 
 - (IBAction)rectificationChangeAction:(UIButton *)sender{

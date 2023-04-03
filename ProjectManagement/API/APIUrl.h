@@ -57,6 +57,7 @@ extern NSString * const Problem;
 
 extern NSString * const BasisListToProject;
 
+extern NSString * const EvaluatingDetails;
 
 @end
 
