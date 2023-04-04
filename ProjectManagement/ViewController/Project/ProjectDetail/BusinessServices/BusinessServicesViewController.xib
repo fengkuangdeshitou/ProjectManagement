@@ -14,6 +14,7 @@
                 <outlet property="address" destination="hci-Yb-QDq" id="uUL-dS-pph"/>
                 <outlet property="normalBtn" destination="Uwc-Tm-Th9" id="ytQ-fb-BR6"/>
                 <outlet property="selectBtn" destination="SUB-E0-qCJ" id="TIO-PM-12I"/>
+                <outlet property="submitBtn" destination="2VK-xs-bkC" id="X3Z-Sf-HYp"/>
                 <outlet property="tableView" destination="8wy-Vk-PUg" id="0sj-LK-SuY"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>

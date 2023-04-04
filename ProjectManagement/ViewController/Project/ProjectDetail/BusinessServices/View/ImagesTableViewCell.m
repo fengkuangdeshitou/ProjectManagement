@@ -56,8 +56,18 @@
 //        }];
 }
 
+- (void)setCanEdit:(BOOL)canEdit{
+    _canEdit = canEdit;
+    self.photoView.showAddCell = canEdit;
+    self.photoView.hideDeleteButton = !canEdit;
+    [self.photoView refreshView];
+}
+
 - (void)setImages:(NSString *)images{
     _images = images;
+    if (!images){
+        return;
+    }
     if (!self.flag){
         self.flag = true;
         [self.manager clearSelectedList];

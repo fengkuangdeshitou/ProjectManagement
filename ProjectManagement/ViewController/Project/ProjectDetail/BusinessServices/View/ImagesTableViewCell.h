@@ -18,6 +18,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,assign) NSInteger row;
 @property(nonatomic,copy)void(^updateFrame)(CGFloat,NSInteger);
 @property(nonatomic,copy)void(^changeComplete)(NSArray *,NSInteger);
+@property(nonatomic,assign) BOOL canEdit;
 
 @end
 

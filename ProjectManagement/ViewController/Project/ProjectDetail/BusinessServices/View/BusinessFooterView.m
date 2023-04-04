@@ -42,8 +42,21 @@
 
 - (void)setDataArray:(NSArray<ProblemModel *> *)dataArray{
     _dataArray = dataArray;
-    [self.tableView reloadData];
-    [self updateTableViewContentSize];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.1 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            for (int i=0; i<self.dataArray.count; i++) {
+                ProblemModel * model = self.dataArray[i];
+                NSArray * optionContent = model.optionContent;
+                for (ProblemModel * option in optionContent) {
+                    if ([obj.optionId isEqualToString:option.optionId]){
+                        option.isSelected = true;
+                    }
+                }
+            }
+        }];
+        [self.tableView reloadData];
+        [self updateTableViewContentSize];
+    });
 }
 
 - (void)setAnswer:(NSArray<ProblemModel *> *)answer{
@@ -53,9 +66,10 @@
         NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
         [params setValue:obj.optionId forKey:@"optionId"];
         [params setValue:obj.problemId forKey:@"problemId"];
-        [params setValue:obj.result forKey:@"result"];
+        [params setValue:[NSNumber numberWithFloat:[obj.result floatValue]]  forKey:@"result"];
         [self.answerArray addObject:params];
     }];
+    
     NSLog(@"self.answerArray=%@",self.answerArray);
 }
 
@@ -64,17 +78,6 @@
         [self.tableView setNeedsLayout];
         [self.tableView layoutIfNeeded];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                for (int i=0; i<self.dataArray.count; i++) {
-                    ProblemModel * model = self.dataArray[i];
-                    NSArray * optionContent = model.optionContent;
-                    for (ProblemModel * option in optionContent) {
-                        if (model.type.intValue == 1){
-                            option.isSelected = true;
-                        }
-                    }
-                }
-            }];
             CGFloat height = ceilf(self.tableView.contentSize.height);
             self.height = height;
             self.tableView.height = height;
@@ -97,21 +100,30 @@
     NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
     NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
     [params setValue:model.optionContent[model.indexPath.row].optionId forKey:@"optionId"];
-    [params setValue:textField.text forKey:@"result"];
+    [params setValue:[NSNumber numberWithFloat:[textField.text floatValue]] forKey:@"result"];
     [params setValue:model.Id forKey:@"problemId"];
-    for (ProblemModel * answerModel in self.answer) {
-        if ([model.optionContent[model.indexPath.row].optionId isEqualToString:answerModel.optionId]){
-            answerModel.result = textField.text;
+    if (filter.count > 0){
+        for (int i=0; i<self.answerArray.count; i++) {
+            NSDictionary * dict = self.answerArray[i];
+            if ([dict[@"optionId"] isEqualToString:model.optionContent[model.indexPath.row].optionId]){
+                [self.answerArray replaceObjectAtIndex:i withObject:params];
+            }
         }
+    }else{
+        [self.answerArray addObject:params];
     }
-    NSLog(@"params=%@",params);
+}
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
+    return self.canEdit;
 }
 
 - (NSString *)getAnswerWithOptionId:(NSString *)optionId{
     NSString * value = @"";
-    for (ProblemModel * model in self.answer) {
-        if ([model.optionId isEqualToString:optionId]){
-            value = model.result;
+    for (NSDictionary * dict in self.answerArray) {
+        if ([dict[@"optionId"] isEqualToString:optionId]){
+            NSNumber * number = dict[@"result"];
+            value = number.stringValue;
         }
     }
     return value;
@@ -124,6 +136,7 @@
         cell.textfield.placeholder = model.optionContent[model.indexPath.row].value;
         cell.textfield.delegate = self;
         cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[model.indexPath.row].optionId];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }else{
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
@@ -134,11 +147,15 @@
         }else{
             cell.accessoryType = UITableViewCellAccessoryNone;
         }
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
+    if (!self.canEdit){
+        return;
+    }
     if (self.indexPath == indexPath){
         return;
     }
@@ -154,7 +171,16 @@
     NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
     [params setValue:model.Id forKey:@"problemId"];
     [params setValue:rowModel.optionId forKey:@"optionId"];
-    NSLog(@"params=%@",params);
+    if (filter.count > 0){
+        for (int i=0; i<self.answerArray.count; i++) {
+            NSDictionary * dict = self.answerArray[i];
+            if ([dict[@"optionId"] isEqualToString:model.optionContent[model.indexPath.row].optionId]){
+                [self.answerArray replaceObjectAtIndex:i withObject:params];
+            }
+        }
+    }else{
+        [self.answerArray addObject:params];
+    }
     [self.tableView reloadData];
     [self updateTableViewContentSize];
 }

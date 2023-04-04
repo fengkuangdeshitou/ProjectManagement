@@ -18,6 +18,7 @@
 @property(nonatomic,weak)IBOutlet UILabel * address;
 @property(nonatomic,weak)IBOutlet UIButton * selectBtn;
 @property(nonatomic,weak)IBOutlet UIButton * normalBtn;
+@property(nonatomic,weak)IBOutlet UIButton * submitBtn;
 
 @property(nonatomic,assign) CGFloat beforHeight;
 @property(nonatomic,assign) CGFloat afterHeight;
@@ -30,6 +31,9 @@
 @property(nonatomic,strong) NSArray * after;
 @property(nonatomic,strong) BusinessFooterView * footer;
 @property(nonatomic,strong) NSArray<ProblemModel *> * problemArray;
+@property(nonatomic,assign) BOOL canEdit;
+@property(nonatomic,assign) BOOL isEvaluation;
+@property(nonatomic,assign) BOOL qualified;
 
 @end
 
@@ -57,9 +61,27 @@
 - (void)getEvaluatingDetails{
     [APIRequest.shareInstance getUrl:EvaluatingDetails params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
         if ([result[@"data"] isKindOfClass:[NSDictionary class]]){
+            self.isEvaluation = true;
             self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
+            if (self.type == 1){
+                if (self.model.afterUrl.length > 0){
+                    self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+                    self.submitBtn.userInteractionEnabled = false;
+                }else{
+                    self.canEdit = true;
+                }
+            }
+            if (self.type == 2 && self.model.resultContrast.intValue == 0){
+                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+                self.submitBtn.userInteractionEnabled = false;
+            }
+            if (self.type == 3){
+                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+                self.submitBtn.userInteractionEnabled = false;
+            }
         }else{
             self.model = [[ProjectModel alloc] init];
+            self.canEdit = true;
         }
         self.model.projectId = self.detailModel.Id;
         self.model.subentryClassesSecondLevelId = self.detailModel.subentryClassesSecondLevelId;
@@ -82,9 +104,35 @@
             }
             basisContent = [basisContent substringToIndex:basisContent.length-1];
             self.model.basisContent = basisContent;
-            [self getProblemArrayWithBasisIds:[idArray componentsJoinedByString:@","]];
-        }else if (self.model.basisId.length > 0){
+            self.model.basisId = [idArray componentsJoinedByString:@","];
             [self getProblemArrayWithBasisIds:self.model.basisId];
+        }else{
+            [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
+                NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+                NSMutableArray * array = [[NSMutableArray alloc] init];
+                [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.name = [NSString stringWithFormat:@"%@\n%@",obj.serialNumber,obj.content];
+                    [array addObject:obj];
+                }];
+                self.pcProjectEvaluationBasis = array;
+                NSIndexPath * indexPath = [NSIndexPath indexPathForRow:0 inSection:1];
+                ContentTableViewCell * cell = [self.tableView cellForRowAtIndexPath:indexPath];
+
+                NSMutableArray * contentArray = [[NSMutableArray alloc] init];
+                NSMutableArray * idArray = [[NSMutableArray alloc] init];
+
+                [self.pcProjectEvaluationBasis enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    [contentArray addObject:obj.name];
+                    [idArray addObject:obj.Id];
+                }];
+                self.model.basisId = [idArray componentsJoinedByString:@","];
+                self.model.basisContent = [contentArray componentsJoinedByString:@"\n"];
+                [self getProblemArrayWithBasisIds:self.model.basisId];
+                cell.descCell.content.text = self.model.basisContent;
+
+            } failure:^(NSString * _Nonnull errorMsg) {
+                
+            }];
         }
         [self.tableView reloadData];
     } failure:^(NSString * _Nonnull errorMsg) {
@@ -94,20 +142,7 @@
 
 - (void)getProblemArrayWithBasisIds:(NSString *)bid{
     [APIRequest.shareInstance getUrl:Problem params:@{@"projectId":self.detailModel.Id,@"basisIds":bid} success:^(NSDictionary * _Nonnull result) {
-        NSArray * modelArray = [ProblemModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-        if (self.model.answer.count > 0){
-            NSMutableArray * array = [[NSMutableArray alloc] init];
-            [modelArray enumerateObjectsUsingBlock:^(ProblemModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                [self.model.answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull answer, NSUInteger idx, BOOL * _Nonnull stop) {
-                    if ([obj.Id isEqualToString:answer.problemId]){
-                        [array addObject:obj];
-                    }
-                }];
-            }];
-            self.problemArray = array;
-        }else{
-            self.problemArray = modelArray;
-        }
+        self.problemArray = [ProblemModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
         self.footer.dataArray = self.problemArray;
     } failure:^(NSString * _Nonnull errorMsg) {
         
@@ -136,19 +171,45 @@
 }
 
 - (void)uploadParamsData{
-    NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:[self.model mj_JSONObject]];
-    [params removeObjectForKey:@"subentryClassesSecondLevelId"];
-    [params removeObjectForKey:@"id"];
-    [params setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
-    [params setValue:self.footer.answerArray forKey:@"answer"];
-    [APIRequest.shareInstance postUrl:EvaluationAdd params:params success:^(NSDictionary * _Nonnull result) {
-        [UIHelper showToast:@"提交成功" toView:self.view];
-        if (self.addCompletion){
-            self.addCompletion([ProjectModel mj_objectWithKeyValues:params]);
+    NSMutableDictionary * pcEvaluation = [[NSMutableDictionary alloc] init];
+    [pcEvaluation setValue:self.model.basisId forKey:@"basisId"];
+    [pcEvaluation setValue:[NSString stringWithFormat:@"%ld",self.type] forKey:@"type"];
+    [pcEvaluation setValue:self.model.projectId forKey:@"projectId"];
+    [pcEvaluation setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
+    if (self.type == 1 && self.model.afterUrl.length > 0){
+        [pcEvaluation setValue:@"1" forKey:@"abarbeitung"];
+        [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
+        [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
+    }
+    if (self.type == 2){
+        [pcEvaluation setValue:self.model.evaluationUrl forKey:@"evaluationUrl"];
+    }
+    if (self.type == 3){
+        [pcEvaluation setValue:self.model.resultUrl forKey:@"resultUrl"];
+    }
+    NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
+    [params setValue:pcEvaluation forKey:@"pcEvaluation"];
+    [params setValue:self.footer.answerArray forKey:@"problemContent"];
+    [APIRequest.shareInstance postUrl:SubmitEvaluation params:params success:^(NSDictionary * _Nonnull result) {
+        self.isEvaluation = true;
+        NSDictionary * data = result[@"data"];
+        self.qualified = [data[@"qualified"] boolValue];
+        if (!self.qualified){
+            NSArray * rectificationRequest = data[@"rectificationRequest"];
+            self.model.rectificationRequest = rectificationRequest;
+            [self.tableView reloadData];
+        }else{
+            self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            self.submitBtn.userInteractionEnabled = false;
+            self.canEdit = false;
+            [self.tableView reloadData];
+//            if (self.addCompletion){
+//                self.addCompletion([ProjectModel mj_objectWithKeyValues:params]);
+//            }
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.navigationController popViewControllerAnimated:true];
+            });
         }
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-            [self.navigationController popViewControllerAnimated:true];
-        });
     } failure:^(NSString * _Nonnull errorMsg) {
 
     }];
@@ -237,7 +298,7 @@
             [UIHelper showToast:@"请输入评测依据" toView:self.view];
             return;
         }
-        if (self.after.count == 0){
+        if (self.befor.count == 0){
             [UIHelper showToast:@"请结果照片" toView:self.view];
             return;
         }
@@ -254,7 +315,7 @@
     if (textView.tag == 1){
         if (textView.text.length == 0){
             if (!self.pcProjectEvaluationBasis){
-                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.model.subentryClassesSecondLevelId} success:^(NSDictionary * _Nonnull result) {
+                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
                     NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                     NSMutableArray * array = [[NSMutableArray alloc] init];
                     [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
@@ -318,8 +379,6 @@
     }];
 }
 
-
-
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0 || indexPath.section == 2 || indexPath.section == 4){
         ImagesTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ImagesTableViewCell class]) forIndexPath:indexPath];
@@ -332,10 +391,16 @@
             cell.titleLabel.text = @"结果图片上传";
         }
         cell.changeComplete = ^(NSArray * array,NSInteger section) {
-            if (section == 0){
-                self.befor = array;
-            }else{
-                self.after = array;
+            if (self.type == 1){
+                if (section == 2){
+                    self.befor = array;
+                }else if (section == 4){
+                    self.after = array;
+                }
+            }else if (self.type == 2){
+                if (section == 0){
+                    self.befor = array;
+                }
             }
         };
         cell.updateFrame = ^(CGFloat imageHeight,NSInteger section){
@@ -356,10 +421,15 @@
                 cell.images = self.model.resultUrl;
             }
         }else if (indexPath.section == 2){
-            cell.images = self.model.beforeUrl;
-        }else{
-            cell.images = self.model.afterUrl;
+            if (self.type == 1){
+                cell.images = self.model.beforeUrl;
+            }
+        }else if (indexPath.section == 4){
+            if (self.type == 1){
+                cell.images = self.model.afterUrl;
+            }
         }
+        cell.canEdit = self.canEdit;
         return cell;
     }else{
         ContentTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ContentTableViewCell class]) forIndexPath:indexPath];
@@ -384,12 +454,15 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    NSArray * array = [self.detailModel.subentryClassesSecondLevelEvaluation filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"Id == %@",self.subentryClassesSecondLevel]];
-    if (array.count > 0){
-        ProjectModel * model = array.firstObject;
-        return model.evaluation ? 5 : 2;
+    if (!self.isEvaluation){
+        return 2;
+    }else{
+        if (!self.qualified){
+            return 5;
+        }else{
+            return 2;
+        }
     }
-    return  2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
@@ -438,6 +511,7 @@
         if(!self.footer){
             self.footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.footer.tableView.contentSize.height == 0 ? 200 : self.footer.tableView.contentSize.height)];
         }
+        self.footer.canEdit = self.canEdit;
         self.footer.dataArray = self.problemArray;
         self.footer.answer = self.model.answer;
         self.footer.tableViewContentHeightCompletion = ^(CGFloat height){

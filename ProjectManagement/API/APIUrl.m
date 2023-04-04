@@ -43,6 +43,8 @@ NSString * const EditUserInfo = @"app/user/edit";
 
 NSString * const EvaluationAdd = @"app/evaluation/add";
 
+NSString * const SubmitEvaluation = @"app/evaluation/submitEvaluation";
+
 NSString * const PcProjectEvaluationBasis = @"app/evaluation/getPcProjectEvaluationBasis";
 
 NSString * const PcProjectEvaluationSituation = @"app/evaluation/getPcProjectEvaluationSituation";

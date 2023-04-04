@@ -17,6 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) UITableView * tableView;
 @property(nonatomic,copy) void(^tableViewContentHeightCompletion)(CGFloat contentHeight);
 @property(nonatomic,strong) NSMutableArray * answerArray;
+@property(nonatomic,assign) BOOL canEdit;
 
 @end
 

@@ -45,6 +45,8 @@ extern NSString * const EditUserInfo;
 
 extern NSString * const EvaluationAdd;
 
+extern NSString * const SubmitEvaluation;
+
 extern NSString * const PcProjectEvaluationBasis;
 
 extern NSString * const PcProjectEvaluationSituation;

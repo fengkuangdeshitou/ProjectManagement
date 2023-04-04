@@ -82,15 +82,11 @@
         [UIHelper showToast:@"请输入测评面积/道路总长" toView:self.view];
         return;
     }
-    if (self.model.basisContent.length == 0){
-        [UIHelper showToast:@"请选择评测依据" toView:self.view];
-        return;
-    }
     if (self.model.conclusionContent.length == 0){
         [UIHelper showToast:@"请选择评测结论" toView:self.view];
         return;
     }
-    [APIRequest.shareInstance postUrl:EvaluationAdd params:@{@"value":self.model.value,@"basisContent":self.model.basisContent,@"basisId":self.model.basisId,@"conclusionContent":self.model.conclusionContent,@"conclusionId":self.model.conclusionId,@"projectId":self.projectId,@"type":self.model.type} success:^(NSDictionary * _Nonnull result) {
+    [APIRequest.shareInstance postUrl:EvaluationAdd params:@{@"value":self.model.value,@"conclusionContent":self.model.conclusionContent,@"conclusionId":self.model.conclusionId,@"projectId":self.projectId,@"type":self.model.type} success:^(NSDictionary * _Nonnull result) {
         [UIHelper showToast:@"提交成功" toView:self.view];
         [NSNotificationCenter.defaultCenter postNotificationName:Add_Project_NOTIFICATION object:nil];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{

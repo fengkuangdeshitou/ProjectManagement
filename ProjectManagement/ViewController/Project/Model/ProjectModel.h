@@ -22,6 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// 项目地址名称
 @property(nonatomic,strong) NSString * addressName;
 @property(nonatomic,strong) NSString * address;
+/// 0不合格 1合格
+@property(nonatomic,strong) NSString * resultContrast;
 /// 项目综述
 @property(nonatomic,strong) NSString * review;
 /// 状态（0评测中 1审核中 2 审核通过 3 审核未通过）
