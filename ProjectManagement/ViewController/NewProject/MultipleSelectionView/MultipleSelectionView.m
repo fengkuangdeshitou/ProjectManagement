@@ -12,6 +12,7 @@
 @interface MultipleSelectionView ()<TagListViewDelegate,UITableViewDelegate>
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
+@property(nonatomic,assign) CGFloat tagViewHeight;
 
 @end
 
@@ -31,6 +32,12 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     ProjectTagTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ProjectTagTableViewCell class]) forIndexPath:indexPath];
     cell.tagView.delegate = self;
+    cell.tagListViewFrameChange = ^(CGFloat tagHeight){
+        if (self.tagViewHeight != tagHeight){
+            self.tagViewHeight = tagHeight;
+            [self.tableView reloadData];
+        }
+    };
     cell.tags = self.dataArray;
     return cell;
 }
@@ -59,7 +66,8 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 200;
+    NSLog(@"tagHeight,%f",self.tagViewHeight);
+    return self.tagViewHeight+15;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{
@@ -68,6 +76,11 @@
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section{
     return UIView.new;
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
+    self.tableView.frame = self.bounds;
 }
 
 /*

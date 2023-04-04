@@ -88,6 +88,7 @@
 - (void)getBasisListToProjectData{
     [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.Id} success:^(NSDictionary * _Nonnull result) {
         NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        self.basisContent = @"";
         if (modelArray.count > 0){
             for (int i=0; i<modelArray.count; i++) {
                 ProjectModel * model = modelArray[i];
@@ -114,7 +115,7 @@
     }else if ([item[@"type"] isEqualToString:@"tag"]){
         ProjectTagTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([ProjectTagTableViewCell class]) forIndexPath:indexPath];
         __weak typeof(cell) weakCell = cell;
-        cell.tagListViewFrameChange = ^{
+        cell.tagListViewFrameChange = ^(CGFloat tagHeight){
             if (self.intrinsicContentHeight == 0){
                 self.intrinsicContentHeight = weakCell.tagView.intrinsicContentSize.height;
                 [UIView performWithoutAnimation:^{

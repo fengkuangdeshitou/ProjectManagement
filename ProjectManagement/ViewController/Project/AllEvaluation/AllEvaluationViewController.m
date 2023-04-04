@@ -16,12 +16,12 @@
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
 @property(nonatomic,strong) ProjectDetailFooterView * footerView;
-@property(nonatomic,strong) NSArray * dataArray;
+@property(nonatomic,strong) NSMutableArray * dataArray;
 @property(nonatomic,strong) NSArray<ProjectModel*> * pcProjectEvaluationBasis;
 @property(nonatomic,strong) NSArray<ProjectModel*> * pcProjectEvaluationConclusion;
 @property(nonatomic,strong) ProjectModel * model;
 @property(nonatomic,strong) ProjectModel * classModel;
-
+@property(nonatomic,strong) NSString * basisContent;
 
 @end
 
@@ -104,7 +104,7 @@
 - (void)getProjectDetail{
     [APIRequest.shareInstance getUrl:ProjectDetail params:@{@"projectId":self.projectId} success:^(NSDictionary * _Nonnull result) {
         self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
-        self.dataArray = @[
+        self.dataArray = [NSMutableArray arrayWithArray:@[
             @{@"title":@"项目地址",@"value":self.model.addressName,@"type":@"info"},
             @{@"title":@"项目联系人",@"value":self.model.contacts,@"type":@"info"},
             @{@"title":@"联系电话",@"value":self.model.phone,@"type":@"info"},
@@ -117,9 +117,29 @@
             @{@"title":@"",@"value":self.model.conclusionContent?:@"",@"type":@"desc"},
             @{@"title":@"项目分项类别",@"value":self.model.subentryClassesList.count == 0 ? @"" : [self.model.subentryClassesList componentsJoinedByString:@","],@"type":@"info"},
             @{@"title":@"项目二级分项类别评测",@"value":@"",@"type":@"info"}
-        ];
+        ]];
         self.footerView.subentryClassesSecondLevelEvaluation = self.model.subentryClassesSecondLevelEvaluation;
         self.footerView.detailModel = self.model;
+        [self getBasisListToProjectData];
+    } failure:^(NSString * _Nonnull errorMsg) {
+        
+    }];
+}
+
+- (void)getBasisListToProjectData{
+    [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.projectId} success:^(NSDictionary * _Nonnull result) {
+        NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        self.basisContent = @"";
+        if (modelArray.count > 0){
+            for (int i=0; i<modelArray.count; i++) {
+                ProjectModel * model = modelArray[i];
+                self.basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",self.basisContent,model.name,model.serialNumber,model.content];
+            }
+            self.basisContent = [self.basisContent substringToIndex:self.basisContent.length-1];
+            NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[self.dataArray.count-5]];
+            [dict setValue:self.basisContent forKey:@"value"];
+            [self.dataArray replaceObjectAtIndex:self.dataArray.count-5 withObject:dict];
+        }
         [self.tableView reloadData];
     } failure:^(NSString * _Nonnull errorMsg) {
         

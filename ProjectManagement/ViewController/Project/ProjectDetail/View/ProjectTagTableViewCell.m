@@ -26,9 +26,15 @@
             [self.tagView addTag:((ProjectModel*)obj).name];
         }
     }];
+    [self layoutIfNeeded];
+}
+
+- (void)layoutSubviews{
+    [super layoutSubviews];
     if (self.tagListViewFrameChange){
-        self.tagListViewFrameChange();
+        self.tagListViewFrameChange(self.tagView.intrinsicContentSize.height);
     }
+    self.tagView.frame = self.bounds;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

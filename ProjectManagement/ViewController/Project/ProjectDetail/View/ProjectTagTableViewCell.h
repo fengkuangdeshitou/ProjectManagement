@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,weak)IBOutlet TagListView * tagView;
 @property(nonatomic,strong) NSArray * tags;
-@property(nonatomic,copy)void(^tagListViewFrameChange)(void);
+@property(nonatomic,copy)void(^tagListViewFrameChange)(CGFloat tagHeight);
 
 @end
 

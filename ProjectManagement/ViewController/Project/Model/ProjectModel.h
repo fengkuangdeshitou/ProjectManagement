@@ -74,8 +74,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * opinion;
 /// 评测建议
 @property(nonatomic,strong) NSString * suggest;
-
-
+/// 整改要求/建议
+@property(nonatomic,strong) NSArray<NSString*> * rectificationRequest;
 /// 项目类别
 @property(nonatomic,strong) NSString * classesNames;
 /// 项目类别ID
@@ -89,6 +89,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * groupId;
 @property(nonatomic,strong) NSArray<NSString *> * classesSecondLevelList;
 @property(nonatomic,strong) NSArray<ProblemModel *> * optionContent;
+@property(nonatomic,strong) NSArray<ProblemModel *> * answer;
 
 @end
 

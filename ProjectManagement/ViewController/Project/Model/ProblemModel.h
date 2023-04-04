@@ -29,6 +29,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSArray<ProblemModel*> * optionContent;
 ///依据ID
 @property(nonatomic,strong) NSString * situationId;
+@property(nonatomic,strong) NSString * problemId;
+@property(nonatomic,strong) NSString * result;
 ///问题标题
 @property(nonatomic,strong) NSString * subject;
 ///问题类型 1 选择 2 填空

@@ -39,13 +39,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.type = self.detailModel.type.integerValue;
-    if (!self.model){
-        self.model = [[ProjectModel alloc] init];
-        self.model.type = [NSString stringWithFormat:@"%ld",self.type];
-    }
-    self.model.projectId = self.detailModel.Id;
-    self.model.subentryClassesSecondLevelId = self.detailModel.subentryClassesSecondLevelId;
-
     self.address.text = self.detailModel.addressName;
     self.beforHeight = (SCREEN_WIDTH-60)/3;
     self.afterHeight = self.beforHeight;
@@ -59,12 +52,18 @@
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ImagesTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ImagesTableViewCell class])];
     [self.tableView registerNib:[UINib nibWithNibName:NSStringFromClass([ContentTableViewCell class]) bundle:nil] forCellReuseIdentifier:NSStringFromClass([ContentTableViewCell class])];
     [self getEvaluatingDetails];
-    [self getBasisListToProjectData];
 }
 
 - (void)getEvaluatingDetails{
     [APIRequest.shareInstance getUrl:EvaluatingDetails params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
-        
+        if ([result[@"data"] isKindOfClass:[NSDictionary class]]){
+            self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
+        }else{
+            self.model = [[ProjectModel alloc] init];
+        }
+        self.model.projectId = self.detailModel.Id;
+        self.model.subentryClassesSecondLevelId = self.detailModel.subentryClassesSecondLevelId;
+        [self getBasisListToProjectData];
     } failure:^(NSString * _Nonnull errorMsg) {
         
     }];
@@ -73,25 +72,47 @@
 - (void)getBasisListToProjectData{
     [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
         NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-        NSString * basisContent = @"";
         NSMutableArray * idArray = [[NSMutableArray alloc] init];
         if (modelArray.count > 0){
+            NSString * basisContent = @"";
             for (int i=0; i<modelArray.count; i++) {
                 ProjectModel * model = modelArray[i];
-                basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",basisContent,model.name,model.serialNumber,model.content];
+                basisContent = [NSString stringWithFormat:@"%@%@\n%@\n\n",basisContent,model.serialNumber,model.content];
                 [idArray addObject:model.Id];
             }
             basisContent = [basisContent substringToIndex:basisContent.length-1];
             self.model.basisContent = basisContent;
-            self.model.basisId = [idArray componentsJoinedByString:@","];
-            [self.tableView reloadData];
+            [self getProblemArrayWithBasisIds:[idArray componentsJoinedByString:@","]];
+        }else if (self.model.basisId.length > 0){
             [self getProblemArrayWithBasisIds:self.model.basisId];
         }
+        [self.tableView reloadData];
     } failure:^(NSString * _Nonnull errorMsg) {
         
     }];
 }
 
+- (void)getProblemArrayWithBasisIds:(NSString *)bid{
+    [APIRequest.shareInstance getUrl:Problem params:@{@"projectId":self.detailModel.Id,@"basisIds":bid} success:^(NSDictionary * _Nonnull result) {
+        NSArray * modelArray = [ProblemModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+        if (self.model.answer.count > 0){
+            NSMutableArray * array = [[NSMutableArray alloc] init];
+            [modelArray enumerateObjectsUsingBlock:^(ProblemModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                [self.model.answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull answer, NSUInteger idx, BOOL * _Nonnull stop) {
+                    if ([obj.Id isEqualToString:answer.problemId]){
+                        [array addObject:obj];
+                    }
+                }];
+            }];
+            self.problemArray = array;
+        }else{
+            self.problemArray = modelArray;
+        }
+        self.footer.dataArray = self.problemArray;
+    } failure:^(NSString * _Nonnull errorMsg) {
+        
+    }];
+}
 - (IBAction)rectificationChangeAction:(UIButton *)sender{
     if (sender.selected){
         return;
@@ -119,6 +140,7 @@
     [params removeObjectForKey:@"subentryClassesSecondLevelId"];
     [params removeObjectForKey:@"id"];
     [params setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
+    [params setValue:self.footer.answerArray forKey:@"answer"];
     [APIRequest.shareInstance postUrl:EvaluationAdd params:params success:^(NSDictionary * _Nonnull result) {
         [UIHelper showToast:@"提交成功" toView:self.view];
         if (self.addCompletion){
@@ -133,28 +155,27 @@
 }
 
 - (IBAction)submitAction:(id)sender{
-//    NSLog(@"%@",[self.model mj_JSONObject]);
+    NSLog(@"%@",self.footer.answerArray);
     if (self.type == 1){
-        self.model.abarbeitung = self.selectBtn.selected ? @"1" : @"0";
-        if (self.selectBtn.selected){
+        if (self.model.rectificationRequest.count > 0){
             if (self.befor.count == 0){
                 [UIHelper showToast:@"请添加整改前照片" toView:self.view];
                 return;
             }
-            if (self.model.conditionContent.length == 0){
-                [UIHelper showToast:@"请输入评测情况" toView:self.view];
-                return;
-            }
-            if (self.model.askFor.length == 0){
-                [UIHelper showToast:@"请输入整改要求" toView:self.view];
-                return;
-            }
+//            if (self.model.conditionContent.length == 0){
+//                [UIHelper showToast:@"请输入评测情况" toView:self.view];
+//                return;
+//            }
+//            if (self.model.askFor.length == 0){
+//                [UIHelper showToast:@"请输入整改要求" toView:self.view];
+//                return;
+//            }
             if (self.after.count == 0){
                 [UIHelper showToast:@"请添加整改后照片" toView:self.view];
                 return;
             }
             if (self.model.basisContent.length == 0){
-                [UIHelper showToast:@"请输入评测依据" toView:self.view];
+                [UIHelper showToast:@"请选择评测依据" toView:self.view];
                 return;
             }
             [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
@@ -171,12 +192,12 @@
                 }];
             }];
         }else{
-            if (self.model.conditionContent.length == 0){
-                [UIHelper showToast:@"请输入评测情况" toView:self.view];
-                return;
-            }
+//            if (self.model.conditionContent.length == 0){
+//                [UIHelper showToast:@"请输入评测情况" toView:self.view];
+//                return;
+//            }
             if (self.model.basisContent.length == 0){
-                [UIHelper showToast:@"请输入评测依据" toView:self.view];
+                [UIHelper showToast:@"请选择评测依据" toView:self.view];
                 return;
             }
             [self uploadParamsData];
@@ -187,16 +208,16 @@
             [UIHelper showToast:@"请先选择照片" toView:self.view];
             return;
         }
-        if (self.model.conditionContent.length == 0){
-            [UIHelper showToast:@"请输入评测情况" toView:self.view];
-            return;
-        }
-        if (self.model.suggest.length == 0){
-            [UIHelper showToast:@"请输入整改建议" toView:self.view];
-            return;
-        }
+//        if (self.model.conditionContent.length == 0){
+//            [UIHelper showToast:@"请输入评测情况" toView:self.view];
+//            return;
+//        }
+//        if (self.model.suggest.length == 0){
+//            [UIHelper showToast:@"请输入整改建议" toView:self.view];
+//            return;
+//        }
         if (self.model.basisContent.length == 0){
-            [UIHelper showToast:@"请输入评测依据" toView:self.view];
+            [UIHelper showToast:@"请选择评测依据" toView:self.view];
             return;
         }
         [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
@@ -229,21 +250,18 @@
     }
 }
 
-- (void)textViewDidEndEditing:(UITextView *)textView{
-    if (textView.text.length == 0){
-        return;
-    }
-    if (textView.tag == 1){
-        self.model.conditionContent = textView.text;
-    }
-}
-
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     if (textView.tag == 1){
         if (textView.text.length == 0){
             if (!self.pcProjectEvaluationBasis){
-                [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.detailModel.Id,@"subentryId":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
-                    self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.model.subentryClassesSecondLevelId} success:^(NSDictionary * _Nonnull result) {
+                    NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+                    NSMutableArray * array = [[NSMutableArray alloc] init];
+                    [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                        obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
+                        [array addObject:obj];
+                    }];
+                    self.pcProjectEvaluationBasis = array;
                     [self showMultipleSelectionViewWithTextField:textView dataArray:self.pcProjectEvaluationBasis];
                 } failure:^(NSString * _Nonnull errorMsg) {
                     
@@ -251,9 +269,8 @@
             }else{
                 [self showMultipleSelectionViewWithTextField:textView dataArray:self.pcProjectEvaluationBasis];
             }
-            return false;
         }
-        return true;
+        return false;
     }
     return false;
 }
@@ -262,7 +279,6 @@
                                      dataArray:(NSArray *)dataArray{
     MultipleSelectionView * selection = [[MultipleSelectionView alloc] init];
     BRStringPickerView * picker = [[BRStringPickerView alloc] initWithPickerMode:BRStringPickerComponentSingle];
-//    picker.title = textField.placeholder;
     picker.alertView.userInteractionEnabled = true;
     selection.frame = CGRectMake(0, picker.pickerStyle.titleBarHeight, SCREEN_WIDTH, picker.alertView.height-picker.pickerStyle.titleBarHeight);
     selection.dataArray = dataArray;
@@ -302,14 +318,7 @@
     }];
 }
 
-- (void)getProblemArrayWithBasisIds:(NSString *)bid{
-    [APIRequest.shareInstance getUrl:Problem params:@{@"basisIds":bid} success:^(NSDictionary * _Nonnull result) {
-        self.problemArray = [ProblemModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-        self.footer.dataArray = self.problemArray;
-    } failure:^(NSString * _Nonnull errorMsg) {
-        
-    }];
-}
+
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     if (indexPath.section == 0 || indexPath.section == 2 || indexPath.section == 4){
@@ -364,10 +373,10 @@
             cell.descCell.content.placeholder = @"请输入整改建议";
             if (self.type == 1){
                 cell.titleLabel.text = @"整改要求";
-                cell.descCell.content.text = self.model.askFor;
+                cell.descCell.content.text = [self.model.rectificationRequest componentsJoinedByString:@"\n"];
             }else if (self.type == 2){
                 cell.titleLabel.text = @"整改建议";
-                cell.descCell.content.text = self.model.suggest;
+                cell.descCell.content.text = [self.model.rectificationRequest componentsJoinedByString:@"\n"];
             }
         }
         return cell;
@@ -430,6 +439,7 @@
             self.footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, self.footer.tableView.contentSize.height == 0 ? 200 : self.footer.tableView.contentSize.height)];
         }
         self.footer.dataArray = self.problemArray;
+        self.footer.answer = self.model.answer;
         self.footer.tableViewContentHeightCompletion = ^(CGFloat height){
             [UIView performWithoutAnimation:^{
                 [tableView beginUpdates];

@@ -46,11 +46,35 @@
     [self updateTableViewContentSize];
 }
 
+- (void)setAnswer:(NSArray<ProblemModel *> *)answer{
+    _answer = answer;
+    self.answerArray = [[NSMutableArray alloc] init];
+    [answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
+        [params setValue:obj.optionId forKey:@"optionId"];
+        [params setValue:obj.problemId forKey:@"problemId"];
+        [params setValue:obj.result forKey:@"result"];
+        [self.answerArray addObject:params];
+    }];
+    NSLog(@"self.answerArray=%@",self.answerArray);
+}
+
 - (void)updateTableViewContentSize{
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView setNeedsLayout];
         [self.tableView layoutIfNeeded];
         dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                for (int i=0; i<self.dataArray.count; i++) {
+                    ProblemModel * model = self.dataArray[i];
+                    NSArray * optionContent = model.optionContent;
+                    for (ProblemModel * option in optionContent) {
+                        if (model.type.intValue == 1){
+                            option.isSelected = true;
+                        }
+                    }
+                }
+            }];
             CGFloat height = ceilf(self.tableView.contentSize.height);
             self.height = height;
             self.tableView.height = height;
@@ -70,9 +94,27 @@
     BusinessInputTableViewCell * cell = (BusinessInputTableViewCell *)textField.superview.superview;
     NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
     ProblemModel * model = self.dataArray[indexPath.section];
-    NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
-    [params setValue:textField.text forKey:model.optionContent[model.indexPath.row].optionId];
+    NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
+    NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
+    [params setValue:model.optionContent[model.indexPath.row].optionId forKey:@"optionId"];
+    [params setValue:textField.text forKey:@"result"];
+    [params setValue:model.Id forKey:@"problemId"];
+    for (ProblemModel * answerModel in self.answer) {
+        if ([model.optionContent[model.indexPath.row].optionId isEqualToString:answerModel.optionId]){
+            answerModel.result = textField.text;
+        }
+    }
     NSLog(@"params=%@",params);
+}
+
+- (NSString *)getAnswerWithOptionId:(NSString *)optionId{
+    NSString * value = @"";
+    for (ProblemModel * model in self.answer) {
+        if ([model.optionId isEqualToString:optionId]){
+            value = model.result;
+        }
+    }
+    return value;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -81,6 +123,7 @@
         BusinessInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessInputTableViewCell class]) forIndexPath:indexPath];
         cell.textfield.placeholder = model.optionContent[model.indexPath.row].value;
         cell.textfield.delegate = self;
+        cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[model.indexPath.row].optionId];
         return cell;
     }else{
         UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
@@ -107,8 +150,9 @@
     }
     ProblemModel * rowModel = model.optionContent[indexPath.row];
     rowModel.isSelected = !rowModel.isSelected;
-    NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
-    [params setValue:rowModel.standard forKey:@"standard"];
+    NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
+    NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
+    [params setValue:model.Id forKey:@"problemId"];
     [params setValue:rowModel.optionId forKey:@"optionId"];
     NSLog(@"params=%@",params);
     [self.tableView reloadData];

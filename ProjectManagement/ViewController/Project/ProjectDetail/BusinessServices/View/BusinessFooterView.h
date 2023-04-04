@@ -13,8 +13,10 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BusinessFooterView : UIView
 
 @property(nonatomic,strong) NSArray<ProblemModel*> * dataArray;
+@property(nonatomic,strong) NSArray<ProblemModel *> * answer;
 @property(nonatomic,strong) UITableView * tableView;
 @property(nonatomic,copy) void(^tableViewContentHeightCompletion)(CGFloat contentHeight);
+@property(nonatomic,strong) NSMutableArray * answerArray;
 
 @end
 
