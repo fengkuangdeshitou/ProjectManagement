@@ -61,7 +61,7 @@
         self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
         self.nameLabel.text = self.model.name;
         self.dataArray = [NSMutableArray arrayWithArray:@[
-            @{@"title":@"项目类型",@"value":self.model.type.intValue == 1 ? @"使用评测" : (self.model.type.intValue == 2 ? @"督导评测" : @"设计评估"),@"type":@"info"},
+            @{@"title":@"项目类型",@"value":self.model.type.intValue == 1 ? @"试用评测" : (self.model.type.intValue == 2 ? @"督导评测" : @"设计评估"),@"type":@"info"},
             @{@"title":@"项目类别",@"value":self.model.classesNames,@"type":@"info"},
             @{@"title":@"项目二级类别",@"value":@"",@"type":@"info"},
             @{@"title":@"",@"value":@"",@"type":@"tag"},

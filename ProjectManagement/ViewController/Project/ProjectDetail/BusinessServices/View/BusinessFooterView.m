@@ -21,6 +21,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.answerArray = [[NSMutableArray alloc] init];
         self.tableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
         self.tableView.delegate = self;
         self.tableView.dataSource = self;
@@ -28,6 +29,12 @@
         self.tableView.backgroundColor = UIColor.whiteColor;
         self.tableView.scrollEnabled = false;
         self.tableView.clipsToBounds = false;
+        if (@available(iOS 15.0, *)) {
+            self.tableView.sectionHeaderTopPadding = 0;
+        } else {
+            // Fallback on earlier versions
+            self.tableView.contentInsetAdjustmentBehavior = 2;
+        }
         self.tableView.showsHorizontalScrollIndicator = false;
         self.tableView.contentInsetAdjustmentBehavior = UIScrollViewContentInsetAdjustmentNever;
         self.tableView.estimatedRowHeight = 0;
@@ -61,23 +68,21 @@
 
 - (void)setAnswer:(NSArray<ProblemModel *> *)answer{
     _answer = answer;
-    self.answerArray = [[NSMutableArray alloc] init];
     [answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
         [params setValue:obj.optionId forKey:@"optionId"];
         [params setValue:obj.problemId forKey:@"problemId"];
-        [params setValue:[NSNumber numberWithFloat:[obj.result floatValue]]  forKey:@"result"];
+        [params setValue:obj.result forKey:@"result"];
         [self.answerArray addObject:params];
     }];
     
-    NSLog(@"self.answerArray=%@",self.answerArray);
 }
 
 - (void)updateTableViewContentSize{
     dispatch_async(dispatch_get_main_queue(), ^{
         [self.tableView setNeedsLayout];
         [self.tableView layoutIfNeeded];
-        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.25 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(0.15 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
             CGFloat height = ceilf(self.tableView.contentSize.height);
             self.height = height;
             self.tableView.height = height;
@@ -100,7 +105,9 @@
     NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
     NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
     [params setValue:model.optionContent[model.indexPath.row].optionId forKey:@"optionId"];
-    [params setValue:[NSNumber numberWithFloat:[textField.text floatValue]] forKey:@"result"];
+    [params setValue:textField.text forKey:@"result"];
+    NSLog(@"params=%@",params);
+    
     [params setValue:model.Id forKey:@"problemId"];
     if (filter.count > 0){
         for (int i=0; i<self.answerArray.count; i++) {
@@ -122,8 +129,7 @@
     NSString * value = @"";
     for (NSDictionary * dict in self.answerArray) {
         if ([dict[@"optionId"] isEqualToString:optionId]){
-            NSNumber * number = dict[@"result"];
-            value = number.stringValue;
+            value = [NSString stringWithFormat:@"%@",dict[@"result"]];
         }
     }
     return value;
@@ -244,6 +250,7 @@
     if (model.isSelected){
         BusinessFooterView * footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 200)];
         footer.clipsToBounds = true;
+        footer.canEdit = self.canEdit;
         footer.dataArray = model.childProblems;
         footer.tableViewContentHeightCompletion = ^(CGFloat height){
             model.rowHeight = height;

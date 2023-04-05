@@ -18,6 +18,7 @@
 #import "MLPAutoCompleteTextField.h"
 #import <BaiduMapAPI_Base/BMKBaseComponent.h>
 #import <BaiduMapAPI_Search/BMKSearchComponent.h>
+#import "UIView+Hud.h"
 
 @interface NewProjectViewController ()<UITextFieldDelegate,UITextViewDelegate,BMKGeoCodeSearchDelegate>
 
@@ -136,9 +137,11 @@
         return;
     }
     if (self.model.type.intValue == 3){
+        [self.view showHUDToast:@"图片上传中"];
         [self.images hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
             [self uploadImages:imageArray completion:^(NSString * urls) {
                 self.model.url = urls;
+                [self.view hiddenHUD];
                 [self uploadParamsData];
             }];
         }];
@@ -168,7 +171,7 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField{
     [self.view endEditing:true];
     if (textField.tag == 1){
-        [BRStringPickerView showPickerWithTitle:nil dataSourceArr:@[@"使用评测",@"督导评测",@"设计评估"] selectIndex:0 resultBlock:^(BRResultModel * _Nullable resultModel) {
+        [BRStringPickerView showPickerWithTitle:nil dataSourceArr:@[@"试用评测",@"督导评测",@"设计评估"] selectIndex:0 resultBlock:^(BRResultModel * _Nullable resultModel) {
             textField.text = resultModel.value;
             self.model.type = [NSString stringWithFormat:@"%ld",resultModel.index+1];
             if (self.model.type.intValue == 3){

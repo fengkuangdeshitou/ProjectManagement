@@ -14,7 +14,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(nonatomic,strong) NSArray<ProjectModel*> * subentryClassesSecondLevelEvaluation;
 @property(nonatomic,strong) ProjectModel * detailModel;
-@property(nonatomic,copy)void(^addCompletion)(ProjectModel * model);
+@property(nonatomic,copy)void(^addCompletion)(void);
 
 @end
 

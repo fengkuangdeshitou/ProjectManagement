@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * status;
 /// 来源（0后台 1App）
 @property(nonatomic,strong) NSString * source;
-/// 项目类型(1使用评测 2督导评测 3设计评估)
+/// 项目类型(1试用评测 2督导评测 3设计评估)
 @property(nonatomic,strong) NSString * type;
 @property(nonatomic,strong) NSString * serialNumber;
 @property(nonatomic,strong) NSString * contacts;
@@ -87,6 +87,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 项目分项类别ID
 @property(nonatomic,strong) NSString * subentryClassesId;
 /// 项目二级分项类别ID
+@property(nonatomic,strong) NSString * subentryClassesSecondLevel;
 @property(nonatomic,strong) NSString * subentryClassesSecondLevelId;
 @property(nonatomic,strong) NSString * groupId;
 @property(nonatomic,strong) NSArray<NSString *> * classesSecondLevelList;

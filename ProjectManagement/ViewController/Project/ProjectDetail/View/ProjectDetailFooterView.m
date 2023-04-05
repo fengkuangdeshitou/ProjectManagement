@@ -53,10 +53,10 @@
     service.title = self.subentryClassesSecondLevelEvaluation[indexPath.row].name;
     service.subentryClassesSecondLevel = self.subentryClassesSecondLevelEvaluation[indexPath.row].Id;
     service.detailModel = self.detailModel;
-    service.addCompletion = ^(ProjectModel * _Nonnull model) {
+    service.addCompletion = ^{
         [tableView reloadData];
         if (self.addCompletion){
-            self.addCompletion(model);
+            self.addCompletion();
         }
     };
     [UIHelper.currentViewController.navigationController pushViewController:service animated:true];
