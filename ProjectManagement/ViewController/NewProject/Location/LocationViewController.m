@@ -75,11 +75,20 @@ static NSString *annotationViewIdentifier = @"PinAnnotation";
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-
+    UIButton * submit = [UIButton buttonWithType:UIButtonTypeCustom];
+    [submit setTitle:@"确定" forState:UIControlStateNormal];
+    submit.titleLabel.font = [UIFont systemFontOfSize:16];
+    [submit setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
+    [submit addTarget:self action:@selector(submitAction) forControlEvents:UIControlEventTouchUpInside];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:submit];
     [self createMapView];
     [self createAnnotation];
     [self.locationManager startUpdatingLocation];
     [self.locationManager startUpdatingHeading];
+}
+
+- (void)submitAction{
+    [self.navigationController popViewControllerAnimated:true];
 }
 
 - (void)createMapView {
@@ -185,13 +194,24 @@ static NSString *annotationViewIdentifier = @"PinAnnotation";
     self.annotation.screenPointToLock = self.mapView.center;
     [self.locationManager stopUpdatingLocation];
     [self.locationManager stopUpdatingHeading];
+    BMKReverseGeoCodeSearchOption *reverseGeoCodeOption = [[BMKReverseGeoCodeSearchOption alloc]init];
+    reverseGeoCodeOption.location = self.mapView.centerCoordinate;
+    // 是否访问最新版行政区划数据（仅对中国数据生效）
+    reverseGeoCodeOption.isLatestAdmin = YES;
+    BOOL flag = [self.search reverseGeoCode: reverseGeoCodeOption];
+    if (flag) {
+        NSLog(@"逆geo检索发送成功");
+    }  else  {
+        NSLog(@"逆geo检索发送失败");
+    }
 }
 
 - (void)onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result:(BMKReverseGeoCodeSearchResult *)result errorCode:(BMKSearchErrorCode)error {
     if (error == BMK_SEARCH_NO_ERROR) {
         //在此处理正常结果
         if (self.locationCompletion){
-            self.locationCompletion(self.mapView.centerCoordinate,result.address);
+            NSString * address = [NSString stringWithFormat:@"%@,%@,%@",result.addressDetail.province,result.addressDetail.city,result.addressDetail.district];
+            self.locationCompletion(self.mapView.centerCoordinate,result.address,address);
         }
     } else {
         NSLog(@"检索失败");

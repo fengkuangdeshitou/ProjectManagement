@@ -17,7 +17,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) BMKLocationManager * locationManager; //当前位置对象
 @property (nonatomic, strong) BMKUserLocation * userLocation; //当前位置对象
 @property (nonatomic, assign) CLLocationCoordinate2D centerCoordinate;
-@property (nonatomic, copy) void(^locationCompletion)(CLLocationCoordinate2D centerCoordinate,NSString * locationName);
+@property (nonatomic, copy) void(^locationCompletion)(CLLocationCoordinate2D centerCoordinate,NSString * locationName,NSString * detailAddress);
 
 @end
 

@@ -44,7 +44,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.type = self.detailModel.type.integerValue;
-    self.address.text = self.detailModel.addressName;
+    self.address.text = self.detailModel.detailAddress;
     self.beforHeight = (SCREEN_WIDTH-60)/3;
     self.afterHeight = self.beforHeight;
     if (self.type == 3){

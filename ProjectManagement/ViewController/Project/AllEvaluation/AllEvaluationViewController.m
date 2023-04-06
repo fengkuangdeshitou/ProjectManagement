@@ -130,7 +130,7 @@
     [APIRequest.shareInstance getUrl:ProjectDetail params:@{@"projectId":self.projectId} success:^(NSDictionary * _Nonnull result) {
         self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
         self.dataArray = [NSMutableArray arrayWithArray:@[
-            @{@"title":@"项目地址",@"value":self.model.addressName,@"type":@"info"},
+            @{@"title":@"项目地址",@"value":self.model.detailAddress,@"type":@"info"},
             @{@"title":@"项目联系人",@"value":self.model.contacts,@"type":@"info"},
             @{@"title":@"联系电话",@"value":self.model.phone,@"type":@"info"},
             @{@"title":@"项目综述",@"value":@"",@"type":@"info"},

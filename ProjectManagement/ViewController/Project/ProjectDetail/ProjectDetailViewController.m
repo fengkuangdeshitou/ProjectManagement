@@ -67,7 +67,7 @@
             @{@"title":@"",@"value":@"",@"type":@"tag"},
             @{@"title":@"使用设施的残障人士类别",@"value":[self.model.groupList componentsJoinedByString:@","],@"type":@"info"},
             @{@"title":@"项目建设单位",@"value":self.model.constructionUnit?:@"",@"type":@"info"},
-            @{@"title":@"项目地址",@"value":self.model.addressName,@"type":@"info"},
+            @{@"title":@"项目地址",@"value":self.model.detailAddress,@"type":@"info"},
             @{@"title":@"项目联系人",@"value":self.model.contacts,@"type":@"info"},
             @{@"title":@"联系电话",@"value":self.model.phone,@"type":@"info"},
             @{@"title":@"项目综述",@"value":@"",@"type":@"info"},

@@ -34,10 +34,19 @@
 
 @property(nonatomic,strong) NSArray * images;
 @property(nonatomic,assign) CGFloat imagesCellHeight;
+@property(nonatomic,strong) BMKGeoCodeSearch *search;
 
 @end
 
 @implementation NewProjectViewController
+
+- (BMKGeoCodeSearch *)search{
+    if(!_search){
+        _search = [[BMKGeoCodeSearch alloc] init];
+    }
+    _search.delegate = self;
+    return _search;
+}
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -265,7 +274,7 @@
     }else if (textField.tag == 5){
         self.model.constructionUnit = textField.text;
     }else if (textField.tag == 6){
-        self.model.addressName = textField.text;
+        self.model.detailAddress = textField.text;
         BMKGeoCodeSearch *search = [[BMKGeoCodeSearch alloc] init];
         search.delegate = self;
         BMKGeoCodeSearchOption *geoCodeSearchOption = [[BMKGeoCodeSearchOption alloc]init];
@@ -296,9 +305,30 @@
         //在此处理正常结果
         self.model.address = [NSString stringWithFormat:@"%.06f,%.06f",result.location.longitude,result.location.latitude];
         NSLog(@"===%@",self.model.address);
+
+        BMKReverseGeoCodeSearchOption *reverseGeoCodeOption = [[BMKReverseGeoCodeSearchOption alloc]init];
+        reverseGeoCodeOption.location = result.location;
+        // 是否访问最新版行政区划数据（仅对中国数据生效）
+        reverseGeoCodeOption.isLatestAdmin = YES;
+        BOOL flag = [self.search reverseGeoCode: reverseGeoCodeOption];
+        if (flag) {
+            NSLog(@"逆geo检索发送成功");
+        }  else  {
+            NSLog(@"逆geo检索发送失败");
+        }
+        
     } else {
         NSLog(@"检索失败");
         
+    }
+}
+
+- (void)onGetReverseGeoCodeResult:(BMKGeoCodeSearch *)searcher result:(BMKReverseGeoCodeSearchResult *)result errorCode:(BMKSearchErrorCode)error {
+    if (error == BMK_SEARCH_NO_ERROR) {
+        NSString * addressName = [NSString stringWithFormat:@"%@,%@,%@",result.addressDetail.province,result.addressDetail.city,result.addressDetail.district];
+        self.model.addressName = addressName;
+    } else {
+        NSLog(@"检索失败");
     }
 }
 
@@ -422,10 +452,11 @@
     LocationTableViewCell * cell = (LocationTableViewCell *)btn.superview.superview;
     LocationViewController * location = [[LocationViewController alloc] init];
     location.title = @"位置";
-    location.locationCompletion = ^(CLLocationCoordinate2D centerCoordinate,NSString * addressName) {
-        cell.textField.text = addressName;
-        self.model.addressName = addressName;
+    location.locationCompletion = ^(CLLocationCoordinate2D centerCoordinate,NSString * detailAddress,NSString * addressName) {
+        cell.textField.text = detailAddress;
+        self.model.detailAddress = detailAddress;
         self.model.address = [NSString stringWithFormat:@"%.06f,%.06f",centerCoordinate.longitude,centerCoordinate.latitude];
+        self.model.addressName = addressName;
     };
     location.hidesBottomBarWhenPushed = true;
     [self.navigationController pushViewController:location animated:true];
