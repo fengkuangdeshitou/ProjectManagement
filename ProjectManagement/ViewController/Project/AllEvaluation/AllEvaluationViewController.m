@@ -13,6 +13,7 @@
 @import BRPickerView;
 #import "ImagesTableViewCell.h"
 #import "UIView+Hud.h"
+#import "MultipleSelectionView.h"
 
 @interface AllEvaluationViewController ()<UITextViewDelegate,UITextFieldDelegate>
 
@@ -175,21 +176,24 @@
 - (BOOL)textViewShouldBeginEditing:(UITextView *)textView{
     [self.view endEditing:true];
     if (textView.tag == 7){
-//        if (textView.text.length == 0){
-//            if (!self.pcProjectEvaluationBasis){
-//                [APIRequest.shareInstance getUrl:PcProjectEvaluationBasis params:@{} success:^(NSDictionary * _Nonnull result) {
-//                    self.pcProjectEvaluationBasis = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
-//                    [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-//                } failure:^(NSString * _Nonnull errorMsg) {
-//
-//                }];
-//            }else{
-//                [self showPickerViewWithArray:self.pcProjectEvaluationBasis textView:textView];
-//            }
-//            return false;
-//        }else{
-//            return true;
-//        }
+        if (textView.text.length == 0){
+            NSMutableArray * idArray = [[NSMutableArray alloc] init];
+            for (ProjectModel * model in self.model.subentryClassesSecondLevelEvaluation) {
+                [idArray addObject:model.Id];
+            }
+            [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":[idArray componentsJoinedByString:@","]} success:^(NSDictionary * _Nonnull result) {
+                NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
+                NSMutableArray * array = [[NSMutableArray alloc] init];
+                [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+                    obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
+                    [array addObject:obj];
+                }];
+                self.pcProjectEvaluationBasis = array;
+                [self showMultipleSelectionViewWithTextField:textView dataArray:self.pcProjectEvaluationBasis];
+            } failure:^(NSString * _Nonnull errorMsg) {
+                
+            }];
+        }
         return false;
     }
     if (textView.tag == 9){
@@ -210,6 +214,31 @@
         }
     }
     return false;
+}
+
+- (void)showMultipleSelectionViewWithTextField:(UITextView *)textView
+                                     dataArray:(NSArray *)dataArray{
+    MultipleSelectionView * selection = [[MultipleSelectionView alloc] init];
+    BRStringPickerView * picker = [[BRStringPickerView alloc] initWithPickerMode:BRStringPickerComponentSingle];
+    picker.alertView.userInteractionEnabled = true;
+    selection.frame = CGRectMake(0, picker.pickerStyle.titleBarHeight, SCREEN_WIDTH, picker.alertView.height-picker.pickerStyle.titleBarHeight);
+    selection.dataArray = dataArray;
+    picker.resultModelBlock = ^(BRResultModel * _Nullable resultModel) {
+        NSMutableArray * contentArray = [[NSMutableArray alloc] init];
+        NSMutableArray * idArray = [[NSMutableArray alloc] init];
+
+        [selection.selectedArray enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [contentArray addObject:obj.name];
+            [idArray addObject:obj.Id];
+        }];
+        if (textView.tag == 1){
+            self.model.basisId = [idArray componentsJoinedByString:@","];
+            self.model.basisContent = [contentArray componentsJoinedByString:@"\n"];
+        }
+        textView.text = [contentArray componentsJoinedByString:@"\n"];
+    };
+    [picker show];
+    [picker.alertView addSubview:selection];
 }
 
 - (void)showPickerViewWithArray:(NSArray<ProjectModel*> *)dataArray
