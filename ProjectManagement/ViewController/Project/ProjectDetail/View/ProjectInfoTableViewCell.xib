@@ -17,20 +17,21 @@
                 <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lIM-hg-fHZ">
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lIM-hg-fHZ">
                         <rect key="frame" x="15" y="13.666666666666664" width="36" height="17"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" red="0.33333333333333331" green="0.36078431372549019" blue="0.42745098039215684" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W7w-9h-28W">
-                        <rect key="frame" x="269" y="13.666666666666664" width="36" height="17"/>
+                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="W7w-9h-28W">
+                        <rect key="frame" x="61" y="13.666666666666664" width="244" height="17"/>
                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                         <color key="textColor" red="0.070588235294117646" green="0.070588235294117646" blue="0.070588235294117646" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
                 </subviews>
                 <constraints>
+                    <constraint firstItem="W7w-9h-28W" firstAttribute="leading" secondItem="lIM-hg-fHZ" secondAttribute="trailing" constant="10" id="1Wk-Yy-6nL"/>
                     <constraint firstAttribute="trailing" secondItem="W7w-9h-28W" secondAttribute="trailing" constant="15" id="6Cn-oB-cYE"/>
                     <constraint firstItem="lIM-hg-fHZ" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="ele-pg-6ET"/>
                     <constraint firstItem="W7w-9h-28W" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="p4k-k2-zLh"/>

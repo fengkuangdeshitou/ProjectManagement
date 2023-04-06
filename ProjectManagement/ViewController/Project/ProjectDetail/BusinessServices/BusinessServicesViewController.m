@@ -218,6 +218,9 @@
                 self.submitBtn.userInteractionEnabled = false;
             }
             [self.tableView reloadData];
+            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+                [self.navigationController popViewControllerAnimated:true];
+            });
         }else{
             self.submitBtn.userInteractionEnabled = false;
             [UIHelper showToast:@"提交成功" toView:self.view];
@@ -570,7 +573,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForFooterInSection:(NSInteger)section{
     if (section == 1){
-        return self.footer.tableView.contentSize.height + 15;
+        return self.footer.tableView.contentSize.height + 37;
     }else{
         return 0.01;
     }

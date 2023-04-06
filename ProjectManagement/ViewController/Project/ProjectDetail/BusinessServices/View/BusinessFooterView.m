@@ -104,17 +104,22 @@
     ProblemModel * model = self.dataArray[indexPath.section];
     NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
     NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
-    [params setValue:model.optionContent[model.indexPath.row].optionId forKey:@"optionId"];
+    [params setValue:model.optionContent[indexPath.row].optionId forKey:@"optionId"];
     [params setValue:textField.text forKey:@"result"];
     NSLog(@"params=%@",params);
     
     [params setValue:model.Id forKey:@"problemId"];
     if (filter.count > 0){
-        for (int i=0; i<self.answerArray.count; i++) {
-            NSDictionary * dict = self.answerArray[i];
-            if ([dict[@"optionId"] isEqualToString:model.optionContent[model.indexPath.row].optionId]){
-                [self.answerArray replaceObjectAtIndex:i withObject:params];
+        NSArray * filterAnswer = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"optionId == %@",model.optionContent[indexPath.row].optionId]];
+        if (filterAnswer.count > 0){
+            for (int i=0; i<self.answerArray.count; i++) {
+                NSDictionary * dict = self.answerArray[i];
+                if ([dict[@"optionId"] isEqualToString:model.optionContent[indexPath.row].optionId]){
+                    [self.answerArray replaceObjectAtIndex:i withObject:params];
+                }
             }
+        }else{
+            [self.answerArray addObject:params];
         }
     }else{
         [self.answerArray addObject:params];
@@ -139,9 +144,9 @@
     ProblemModel * model = self.dataArray[indexPath.section];
     if (model.type.intValue == 2){
         BusinessInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessInputTableViewCell class]) forIndexPath:indexPath];
-        cell.textfield.placeholder = model.optionContent[model.indexPath.row].value;
+        cell.textfield.placeholder = model.optionContent[indexPath.row].value;
         cell.textfield.delegate = self;
-        cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[model.indexPath.row].optionId];
+        cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[indexPath.row].optionId];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }else{

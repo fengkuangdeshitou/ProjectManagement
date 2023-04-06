@@ -36,7 +36,7 @@
         sex = @"未知";
     }
     self.dataArray = @[
-        @{@"title":@"姓名",@"value":self.user[@"nickName"],@"type":@"normal"},
+        @{@"title":@"姓名",@"value":self.user[@"nickName"]?:@"",@"type":@"normal"},
         @{@"title":@"账号",@"value":self.user[@"userName"],@"type":@"normal"},
         @{@"title":@"职位",@"value":[self.user[@"position"] isEqual:[NSNull null]] ? @"无" : self.user[@"position"],@"type":@"normal"},
         @{@"title":@"性别",@"value":sex,@"type":@"select"},
