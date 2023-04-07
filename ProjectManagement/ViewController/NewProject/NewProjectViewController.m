@@ -172,6 +172,7 @@
         [UIHelper showToast:@"新建项目成功" toView:self.view];
         self.navigationController.viewControllers = @[[[NewProjectViewController alloc] init]];
         [NSNotificationCenter.defaultCenter postNotificationName:Add_Project_NOTIFICATION object:nil];
+        self.navigationController.tabBarController.selectedIndex = 0;
     } failure:^(NSString * _Nonnull errorMsg) {
 
     }];
@@ -364,6 +365,9 @@
         }else if (textField.tag == 12){
             self.model.subentryClassesSecondLevelId = [idArray componentsJoinedByString:@","];
         }else if (textField.tag == 13){
+            if (idArray.count == 0){
+                return;
+            }
             self.model.basisId = [idArray componentsJoinedByString:@","];
             __block NSString * evaluationSituation = @"";
             [self.projectEvaluationSituation enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {

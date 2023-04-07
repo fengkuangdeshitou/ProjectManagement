@@ -16,7 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * projectId;
 @property(nonatomic,assign) BOOL isSelected;
 @property(nonatomic,strong) NSString * name;
-@property(nonatomic,assign) BOOL isAllConfig;
+///
+@property(nonatomic,strong) NSString * submitStatus;
 /// 建设单位
 @property(nonatomic,strong) NSString * constructionUnit;
 /// 项目地址名称

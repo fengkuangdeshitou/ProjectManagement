@@ -36,15 +36,15 @@
         sex = @"未知";
     }
     self.dataArray = @[
-        @{@"title":@"姓名",@"value":self.user[@"nickName"]?:@"",@"type":@"normal"},
+        @{@"title":@"姓名",@"value":self.user[@"nickName"],@"type":@"normal"},
         @{@"title":@"账号",@"value":self.user[@"userName"],@"type":@"normal"},
         @{@"title":@"职位",@"value":[self.user[@"position"] isEqual:[NSNull null]] ? @"无" : self.user[@"position"],@"type":@"normal"},
         @{@"title":@"性别",@"value":sex,@"type":@"select"},
         @{@"title":@"出生年月日",@"value":self.user[@"birthday"]?[NSString stringWithFormat:@"%@",self.user[@"birthday"]]:@"",@"type":@"select"},
-        @{@"title":@"政治面貌",@"value":self.user[@"politicsStatus"]?:@"",@"type":@"input"},
-        @{@"title":@"工作单位",@"value":self.user[@"workUnit"]?:@"",@"type":@"input"},
-        @{@"title":@"学历",@"value":self.user[@"education"]?:@"",@"type":@"input"},
-        @{@"title":@"联系方式",@"value":self.user[@"phonenumber"]?:@"",@"type":@"input"},
+        @{@"title":@"政治面貌",@"value":[self.user[@"politicsStatus"] isEqual:[NSNull null]]?@"":self.user[@"politicsStatus"],@"type":@"input"},
+        @{@"title":@"工作单位",@"value":[self.user[@"workUnit"] isEqual:[NSNull null]]?@"":self.user[@"workUnit"],@"type":@"input"},
+        @{@"title":@"学历",@"value":[self.user[@"education"] isEqual:[NSNull null]]?@"":self.user[@"education"],@"type":@"input"},
+        @{@"title":@"联系方式",@"value":[self.user[@"phonenumber"] isEqual:[NSNull null]]?@"":self.user[@"phonenumber"],@"type":@"input"}
     ];
     
     UIButton * submit = [UIButton buttonWithType:UIButtonTypeCustom];

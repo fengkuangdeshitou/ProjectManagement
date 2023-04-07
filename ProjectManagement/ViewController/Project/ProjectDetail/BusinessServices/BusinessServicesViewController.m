@@ -66,11 +66,17 @@
             self.isEvaluation = true;
             self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
             if (self.type == 1){
-                if (self.model.afterUrl.length > 0 || self.model.resultContrast.intValue == 1){
-                    self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                    self.submitBtn.userInteractionEnabled = false;
+                if(self.detailModel.status.intValue == 3){
+                    NSInteger submitStatus = self.model.submitStatus.intValue;
+                    if (submitStatus < 3){
+                        self.canEdit = true;
+                    }else if (submitStatus == 3){
+                        self.canEdit = self.model.resultContrast.intValue == 0 && self.model.afterUrl.length == 0;
+                    }else{
+                        self.canEdit = false;
+                    }
                 }else{
-                    self.canEdit = true;
+                    self.canEdit = false;
                 }
             }
             if (self.type == 2 && self.model.resultContrast.intValue == 0){
@@ -84,6 +90,10 @@
         }else{
             self.model = [[ProjectModel alloc] init];
             self.canEdit = true;
+        }
+        if (!self.canEdit){
+            self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
+            self.submitBtn.userInteractionEnabled = false;
         }
         self.model.projectId = self.detailModel.Id;
         self.model.subentryClassesSecondLevelId = self.detailModel.subentryClassesSecondLevelId;
