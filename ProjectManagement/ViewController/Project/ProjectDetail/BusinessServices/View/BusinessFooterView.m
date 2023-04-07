@@ -68,6 +68,9 @@
 
 - (void)setAnswer:(NSArray<ProblemModel *> *)answer{
     _answer = answer;
+    if (self.answerArray.count > 0){
+        return;
+    }
     [answer enumerateObjectsUsingBlock:^(ProblemModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
         NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
         [params setValue:obj.optionId forKey:@"optionId"];
@@ -185,13 +188,14 @@
     if (filter.count > 0){
         for (int i=0; i<self.answerArray.count; i++) {
             NSDictionary * dict = self.answerArray[i];
-            if ([dict[@"optionId"] isEqualToString:model.optionContent[model.indexPath.row].optionId]){
+            if ([dict[@"problemId"] isEqualToString:model.Id]){
                 [self.answerArray replaceObjectAtIndex:i withObject:params];
             }
         }
     }else{
         [self.answerArray addObject:params];
     }
+    NSLog(@"answerArray=%@",self.answerArray);
     [self.tableView reloadData];
     [self updateTableViewContentSize];
 }

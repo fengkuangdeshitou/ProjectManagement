@@ -170,9 +170,9 @@
 - (void)uploadParamsData{
     [APIRequest.shareInstance postUrl:AddProject params:[self.model mj_JSONObject] success:^(NSDictionary * _Nonnull result) {
         [UIHelper showToast:@"新建项目成功" toView:self.view];
+        self.navigationController.tabBarController.selectedIndex = 0;
         self.navigationController.viewControllers = @[[[NewProjectViewController alloc] init]];
         [NSNotificationCenter.defaultCenter postNotificationName:Add_Project_NOTIFICATION object:nil];
-        self.navigationController.tabBarController.selectedIndex = 0;
     } failure:^(NSString * _Nonnull errorMsg) {
 
     }];

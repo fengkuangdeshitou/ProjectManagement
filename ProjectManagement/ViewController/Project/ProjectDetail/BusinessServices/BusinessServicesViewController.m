@@ -76,16 +76,16 @@
                         self.canEdit = false;
                     }
                 }else{
-                    self.canEdit = false;
+                    self.canEdit = self.model.resultContrast.intValue == 0 && self.model.afterUrl.length == 0;
                 }
-            }
-            if (self.type == 2 && self.model.resultContrast.intValue == 0){
-                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                self.submitBtn.userInteractionEnabled = false;
-            }
-            if (self.type == 3){
-                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                self.submitBtn.userInteractionEnabled = false;
+            }else{
+                if (self.model.submitStatus.intValue == 3){
+                    self.canEdit = false;
+                }else{
+                    if (self.model.resultContrast.intValue == 0){
+                        self.canEdit = true;
+                    }
+                }
             }
         }else{
             self.model = [[ProjectModel alloc] init];
@@ -196,15 +196,29 @@
     [pcEvaluation setValue:[NSString stringWithFormat:@"%ld",self.type] forKey:@"type"];
     [pcEvaluation setValue:self.model.projectId forKey:@"projectId"];
     [pcEvaluation setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
-    if (self.type == 1 && self.model.afterUrl.length > 0){
-        [pcEvaluation setValue:@"1" forKey:@"abarbeitung"];
-        [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
-        [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
+    if (self.type == 1){
+        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+            [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
+        }
+        if (self.model.submitStatus.intValue == 3){
+            [pcEvaluation setValue:@"4" forKey:@"submitStatus"];
+        }
+        if (self.model.afterUrl.length > 0){
+            [pcEvaluation setValue:@"1" forKey:@"abarbeitung"];
+            [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
+            [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
+        }
     }
     if (self.type == 2){
+        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+            [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
+        }
         [pcEvaluation setValue:self.model.evaluationUrl forKey:@"evaluationUrl"];
     }
     if (self.type == 3){
+        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+            [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
+        }
         [pcEvaluation setValue:self.model.resultUrl forKey:@"resultUrl"];
     }
     NSMutableDictionary * params = [[NSMutableDictionary alloc] init];
@@ -246,7 +260,7 @@
 
 - (IBAction)submitAction:(id)sender{
     if (self.type == 1){
-        if (self.model.rectificationRequest.count > 0){
+        if (self.tableView.numberOfSections == 5){
             if (self.befor.count == 0){
                 [UIHelper showToast:@"请添加整改前照片" toView:self.view];
                 return;
@@ -320,20 +334,12 @@
         
     }
     else if (self.type == 3){
-        if (self.model.conditionContent.length == 0){
-            [UIHelper showToast:@"请输入评测情况" toView:self.view];
-            return;
-        }
-        if (self.model.basisContent.length == 0){
-            [UIHelper showToast:@"请输入评测依据" toView:self.view];
-            return;
-        }
         if (self.befor.count == 0){
             [UIHelper showToast:@"请结果照片" toView:self.view];
             return;
         }
         [self.view showHUDToast:@"上传图片中"];
-        [self.after hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
+        [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
             [self uploadImages:imageArray completion:^(NSString * urls) {
                 self.model.resultUrl = urls;
                 [self uploadParamsData];
@@ -382,7 +388,7 @@
             [contentArray addObject:obj.name];
             [idArray addObject:obj.Id];
         }];
-        if (textView.tag == 1){
+        if (textView.tag == 1 && idArray.count > 0){
 //            self.model.basisId = self.pcProjectEvaluationBasis[resultModel.index].Id;
             self.model.basisId = [idArray componentsJoinedByString:@","];
             self.model.basisContent = [contentArray componentsJoinedByString:@"\n"];
@@ -429,7 +435,7 @@
                 }else if (section == 4){
                     weakSelf.after = array;
                 }
-            }else if (weakSelf.type == 2){
+            }else{
                 if (section == 0){
                     weakSelf.befor = array;
                 }
@@ -447,18 +453,40 @@
             }];
         };
         if (indexPath.section == 0){
-            if (self.type == 2){
-                cell.images = self.model.evaluationUrl;
-            }else if (self.type == 3){
-                cell.images = self.model.resultUrl;
+            if (!self.canEdit){
+                if (self.type == 2){
+                    cell.images = self.model.evaluationUrl;
+                }else if (self.type == 3){
+                    cell.images = self.model.resultUrl;
+                }
             }
         }else if (indexPath.section == 2){
             if (self.type == 1){
-                cell.images = self.model.beforeUrl;
+                if (self.model.resultContrast.intValue == 1){
+                    if (self.model.beforeUrl.length > 0){
+                        cell.images = self.model.beforeUrl;
+                    }
+                }else{
+                    if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue == 4){
+                        
+                    }else{
+                        cell.images = self.model.beforeUrl;
+                    }
+                }
             }
         }else if (indexPath.section == 4){
             if (self.type == 1){
-                cell.images = self.model.afterUrl;
+                if (self.model.resultContrast.intValue == 1){
+                    if (self.model.beforeUrl.length > 0){
+                        cell.images = self.model.afterUrl;
+                    }
+                }else{
+                    if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue == 4){
+                        
+                    }else{
+                        cell.images = self.model.afterUrl;
+                    }
+                }
             }
         }
         cell.canEdit = self.canEdit;
@@ -486,14 +514,28 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
-    if (!self.isEvaluation || self.model.resultContrast.intValue == 1){
-        return 2;
-    }else{
-        if (!self.qualified){
-            return 5;
+    if (self.type == 1){
+        if (self.model.resultContrast.intValue == 1){
+            if (self.model.afterUrl.length > 0){
+                return 5;
+            }else{
+                return 2;
+            }
         }else{
-            return 2;
+            if (self.model.rectificationRequest.count > 0){
+                return 5;
+            }else{
+                return 2;
+            }
         }
+    }else if (self.type == 2){
+        if (!self.isEvaluation || self.model.resultContrast.intValue == 1){
+            return 2;
+        }else{
+            return 4;
+        }
+    }else{
+        return 2;
     }
 }
 
