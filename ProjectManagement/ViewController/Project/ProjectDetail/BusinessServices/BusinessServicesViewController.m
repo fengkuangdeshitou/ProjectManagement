@@ -16,6 +16,8 @@
 @interface BusinessServicesViewController ()<UITextViewDelegate,UITableViewDataSource>
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
+@property(nonatomic,strong) ProjectModel * model;
+
 @property(nonatomic,weak)IBOutlet UILabel * address;
 @property(nonatomic,weak)IBOutlet UIButton * selectBtn;
 @property(nonatomic,weak)IBOutlet UIButton * normalBtn;
@@ -69,9 +71,13 @@
                 if(self.detailModel.status.intValue == 3){
                     NSInteger submitStatus = self.model.submitStatus.intValue;
                     if (submitStatus < 3){
-                        self.canEdit = true;
+                        if (self.model.resultContrast.intValue == 1){
+                            self.canEdit = false;
+                        }else{
+                            self.canEdit = true;
+                        }
                     }else if (submitStatus == 3){
-                        self.canEdit = self.model.resultContrast.intValue == 0 && self.model.afterUrl.length == 0;
+                        self.canEdit = self.model.resultContrast.intValue == 0;
                     }else{
                         self.canEdit = false;
                     }
@@ -79,12 +85,14 @@
                     self.canEdit = self.model.resultContrast.intValue == 0 && self.model.afterUrl.length == 0;
                 }
             }else{
-                if (self.model.submitStatus.intValue == 3){
-                    self.canEdit = false;
-                }else{
-                    if (self.model.resultContrast.intValue == 0){
+                if (self.detailModel.status.intValue == 3){
+                    if (self.model.submitStatus.intValue == 3){
+                        self.canEdit = false;
+                    }else{
                         self.canEdit = true;
                     }
+                }else{
+                    self.canEdit = false;
                 }
             }
         }else{
@@ -197,7 +205,7 @@
     [pcEvaluation setValue:self.model.projectId forKey:@"projectId"];
     [pcEvaluation setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
     if (self.type == 1){
-        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+        if (self.detailModel.status.intValue == 3 && self.model.resultContrast.intValue == 0){
             [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
         }
         if (self.model.submitStatus.intValue == 3){
@@ -210,13 +218,13 @@
         }
     }
     if (self.type == 2){
-        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+        if (self.detailModel.status.intValue == 3 && self.model.resultContrast.intValue == 0){
             [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
         }
         [pcEvaluation setValue:self.model.evaluationUrl forKey:@"evaluationUrl"];
     }
     if (self.type == 3){
-        if (self.detailModel.status.intValue < 3 && self.model.resultContrast.intValue == 0){
+        if (self.detailModel.status.intValue == 3 && self.model.resultContrast.intValue == 0){
             [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
         }
         [pcEvaluation setValue:self.model.resultUrl forKey:@"resultUrl"];
@@ -233,26 +241,20 @@
         self.isEvaluation = true;
         NSDictionary * data = result[@"data"];
         self.qualified = [data[@"qualified"] boolValue];
+        [UIHelper showToast:@"提交成功" toView:self.view];
+        self.submitBtn.userInteractionEnabled = false;
+        self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
         if (!self.qualified){
             NSArray * rectificationRequest = data[@"rectificationRequest"];
             self.model.rectificationRequest = rectificationRequest;
             if (self.type != 1){
                 self.canEdit = false;
-                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                self.submitBtn.userInteractionEnabled = false;
             }
-            [self.tableView reloadData];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                [self.navigationController popViewControllerAnimated:true];
-            });
-        }else{
-            self.submitBtn.userInteractionEnabled = false;
-            [UIHelper showToast:@"提交成功" toView:self.view];
-            dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-                self.submitBtn.backgroundColor = [UIColor colorWithHexString:@"#999999"];
-                [self.navigationController popViewControllerAnimated:true];
-            });
+//            [self.tableView reloadData];
         }
+        dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(2 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+            [self.navigationController popViewControllerAnimated:true];
+        });
     } failure:^(NSString * _Nonnull errorMsg) {
 
     }];
@@ -453,7 +455,9 @@
             }];
         };
         if (indexPath.section == 0){
-            if (!self.canEdit){
+            if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue != 3){
+                
+            }else{
                 if (self.type == 2){
                     cell.images = self.model.evaluationUrl;
                 }else if (self.type == 3){
@@ -467,9 +471,10 @@
                         cell.images = self.model.beforeUrl;
                     }
                 }else{
-                    if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue == 4){
-                        
-                    }else{
+                    if (self.model.submitStatus.intValue == 4){
+                        cell.images = self.model.beforeUrl;
+                    }
+                    if (self.model.submitStatus.intValue < 3 && self.model.beforeUrl.length > 0){
                         cell.images = self.model.beforeUrl;
                     }
                 }
@@ -481,9 +486,10 @@
                         cell.images = self.model.afterUrl;
                     }
                 }else{
-                    if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue == 4){
-                        
-                    }else{
+                    if (self.model.submitStatus.intValue == 4){
+                        cell.images = self.model.afterUrl;
+                    }
+                    if (self.model.submitStatus.intValue < 3 && self.model.afterUrl.length > 0){
                         cell.images = self.model.afterUrl;
                     }
                 }
@@ -514,25 +520,37 @@
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView{
+    if (!self.model){
+        return 0;
+    }
     if (self.type == 1){
         if (self.model.resultContrast.intValue == 1){
-            if (self.model.afterUrl.length > 0){
-                return 5;
-            }else{
-                return 2;
-            }
+//            if (self.model.afterUrl.length > 0){
+//                return 5;
+//            }else{
+//                return 2;
+//            }
+            return 2;
         }else{
-            if (self.model.rectificationRequest.count > 0){
-                return 5;
-            }else{
+            if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue < 3){
                 return 2;
+            }else{
+                if (self.model.rectificationRequest.count > 0){
+                    return 5;
+                }else{
+                    return 2;
+                }
             }
         }
     }else if (self.type == 2){
         if (!self.isEvaluation || self.model.resultContrast.intValue == 1){
             return 2;
         }else{
-            return 4;
+            if (self.model.submitStatus.intValue == 3){
+                return 4;
+            }else{
+                return 2;
+            }
         }
     }else{
         return 2;

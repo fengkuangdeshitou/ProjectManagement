@@ -13,7 +13,6 @@ NS_ASSUME_NONNULL_BEGIN
 @interface BusinessServicesViewController : BaseViewController
 
 @property(nonatomic,strong) NSString * subentryClassesSecondLevel;
-@property(nonatomic,strong) ProjectModel * model;
 @property(nonatomic,strong) ProjectModel * detailModel;
 @property(nonatomic,copy)void(^addCompletion)(void);
 

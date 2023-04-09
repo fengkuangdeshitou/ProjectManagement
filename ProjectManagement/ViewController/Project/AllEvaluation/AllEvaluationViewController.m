@@ -102,6 +102,10 @@
         return;
     }
     if (self.model.type.intValue == 3){
+        if (self.images.count == 0){
+            [UIHelper showToast:@"请添加结果照片" toView:self.view];
+            return;
+        }
         [self.view showHUDToast:@"图片上传中"];
         [self.images hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
             [self uploadImages:imageArray completion:^(NSString * urls) {
@@ -130,6 +134,10 @@
 - (void)getProjectDetail{
     [APIRequest.shareInstance getUrl:ProjectDetail params:@{@"projectId":self.projectId} success:^(NSDictionary * _Nonnull result) {
         self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
+        if (self.model.projectEvaluation){
+            self.model.conclusionContent = self.model.projectEvaluation.conclusionContent;
+            self.model.conclusionId = self.model.projectEvaluation.conclusionId;
+        }
         self.dataArray = [NSMutableArray arrayWithArray:@[
             @{@"title":@"项目地址",@"value":self.model.detailAddress,@"type":@"info"},
             @{@"title":@"项目联系人",@"value":self.model.contacts,@"type":@"info"},
@@ -145,6 +153,9 @@
             @{@"title":@"结果图片上传",@"placeholder":@"",@"value":@"",@"type":@"image"},
             @{@"title":@"项目二级分项类别评测",@"value":@"",@"type":@"info"}
         ]];
+        if (self.model.type.intValue == 3){
+            self.imagesCellHeight = (SCREEN_WIDTH-50)/3;
+        }
         [self getBasisListToProjectData];
     } failure:^(NSString * _Nonnull errorMsg) {
         
@@ -278,6 +289,7 @@
         InputTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([InputTableViewCell class]) forIndexPath:indexPath];
         cell.titleLabel.text = item[@"title"];
         cell.textField.placeholder = item[@"placeholder"];
+        cell.textField.text = item[@"value"];
         cell.textField.delegate = self;
         cell.textField.tag = indexPath.row;
         return cell;

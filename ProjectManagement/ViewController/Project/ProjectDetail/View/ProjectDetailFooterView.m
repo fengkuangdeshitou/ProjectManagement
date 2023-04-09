@@ -49,7 +49,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath{
     BusinessServicesViewController * service = [[BusinessServicesViewController alloc] init];
-    service.model = self.subentryClassesSecondLevelEvaluation[indexPath.row].evaluation;
+//    service.model = self.subentryClassesSecondLevelEvaluation[indexPath.row].evaluation;
     service.title = self.subentryClassesSecondLevelEvaluation[indexPath.row].name;
     service.subentryClassesSecondLevel = self.subentryClassesSecondLevelEvaluation[indexPath.row].Id;
     service.detailModel = self.detailModel;

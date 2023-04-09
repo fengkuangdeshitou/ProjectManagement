@@ -47,6 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// 二级分项类别评测信息
 @property(nonatomic,strong) NSArray<ProjectModel*> * subentryClassesSecondLevelEvaluation;
 @property(nonatomic,strong) ProjectModel * evaluation;
+@property(nonatomic,strong) ProjectModel * projectEvaluation;
 /// 测评面积/道路总长
 @property(nonatomic,strong) NSString * value;
 /// 评测结论内容
