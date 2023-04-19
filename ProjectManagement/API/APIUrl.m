@@ -9,7 +9,7 @@
 
 @implementation APIUrl
 
-NSString * const Host = @"http://8.141.82.186:9001";
+NSString * const Host = @"http://120.79.249.114:9001";
 
 NSString * const Uploads = @"app/common/uploads";
 
