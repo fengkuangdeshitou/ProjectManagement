@@ -166,12 +166,15 @@
     [APIRequest.shareInstance getUrl:BasisListToProject params:@{@"projectId":self.projectId} success:^(NSDictionary * _Nonnull result) {
         NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
         self.basisContent = @"";
+        NSMutableArray * contentArray = [[NSMutableArray alloc] init];
         if (modelArray.count > 0){
             for (int i=0; i<modelArray.count; i++) {
                 ProjectModel * model = modelArray[i];
-                self.basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",self.basisContent,model.name,model.serialNumber,model.content];
+                if (![contentArray containsObject:model.name]){
+                    [contentArray addObject:model.name];
+                }
             }
-            self.basisContent = [self.basisContent substringToIndex:self.basisContent.length-2];
+            self.basisContent = [contentArray componentsJoinedByString:@"\n"];
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[self.dataArray.count-6]];
             [dict setValue:self.basisContent forKey:@"value"];
             [self.dataArray replaceObjectAtIndex:self.dataArray.count-6 withObject:dict];

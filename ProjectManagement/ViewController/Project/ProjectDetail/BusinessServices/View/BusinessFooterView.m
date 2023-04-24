@@ -7,6 +7,7 @@
 
 #import "BusinessFooterView.h"
 #import "BusinessInputTableViewCell.h"
+#import "BusinessSelectedTableViewCell.h"
 
 @interface BusinessFooterView ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
@@ -25,8 +26,10 @@
         self.tableView = [[UITableView alloc] initWithFrame:self.bounds style:UITableViewStyleGrouped];
         self.tableView.delegate = self;
         self.tableView.dataSource = self;
-        self.tableView.separatorColor = [UIColor colorWithHexString:@"#DEDEDE"];
+        self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
+//        self.tableView.separatorColor = [UIColor colorWithHexString:@"#DEDEDE"];
         self.tableView.backgroundColor = UIColor.whiteColor;
+//        self.tableView.separatorInset = UIEdgeInsetsMake(0, 30, 0, 14);
         self.tableView.scrollEnabled = false;
         self.tableView.clipsToBounds = false;
         if (@available(iOS 15.0, *)) {
@@ -43,6 +46,9 @@
         [self addSubview:self.tableView];
         [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
         [self.tableView registerNib:[UINib nibWithNibName:@"BusinessInputTableViewCell" bundle:nil] forCellReuseIdentifier:@"BusinessInputTableViewCell"];
+        [self.tableView registerNib:[UINib nibWithNibName:@"BusinessSelectedTableViewCell" bundle:nil] forCellReuseIdentifier:@"BusinessSelectedTableViewCell"];
+
+        
     }
     return self;
 }
@@ -150,18 +156,22 @@
         cell.textfield.placeholder = model.optionContent[indexPath.row].value;
         cell.textfield.delegate = self;
         cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[indexPath.row].optionId];
+        UIView * leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
+        leftview.backgroundColor = UIColor.clearColor;
+        cell.textfield.leftView = leftview;
+        cell.textfield.leftViewMode = UITextFieldViewModeAlways;
+        cell.textfield.layer.borderColor = [UIColor colorWithHexString:@"#f6f6f6"].CGColor;
+        cell.textfield.layer.borderWidth = 1;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }else{
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([UITableViewCell class]) forIndexPath:indexPath];
-        cell.textLabel.text = model.optionContent[indexPath.row].value;
-        cell.textLabel.font = [UIFont systemFontOfSize:14];
+        BusinessSelectedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessSelectedTableViewCell class]) forIndexPath:indexPath];
+        cell.titleLabel.text = model.optionContent[indexPath.row].value;
         if (model.optionContent[indexPath.row].isSelected){
-            cell.accessoryType = UITableViewCellAccessoryCheckmark;
+            cell.icon.image = [UIImage imageNamed:@"ic_q_选中"];
         }else{
-            cell.accessoryType = UITableViewCellAccessoryNone;
+            cell.icon.image = [UIImage imageNamed:@"ic_q_未选中"];
         }
-        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         return cell;
     }
 }
@@ -244,7 +254,7 @@
     UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake(35, 0, SCREEN_WIDTH-50, height)];
     title.text = model.subject;
     title.numberOfLines = 0;
-    title.font = [UIFont systemFontOfSize:14];
+    title.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
     title.textColor = [UIColor colorWithHexString:@"#333333"];
     [header addSubview:title];
     return header;

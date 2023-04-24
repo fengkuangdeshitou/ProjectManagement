@@ -67,6 +67,8 @@
 		BD0C6286293A25A000B491F0 /* UITextView+Placeholder.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0C6285293A25A000B491F0 /* UITextView+Placeholder.m */; };
 		BD0C6289293A2BEF00B491F0 /* ProjectDeleteAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD0C6288293A2BEF00B491F0 /* ProjectDeleteAlertView.m */; };
 		BD0C628B293A2C1100B491F0 /* ProjectDeleteAlertView.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD0C628A293A2C1100B491F0 /* ProjectDeleteAlertView.xib */; };
+		BD20DA3C29F6D18B009C974B /* BusinessSelectedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BD20DA3A29F6D18B009C974B /* BusinessSelectedTableViewCell.m */; };
+		BD20DA3D29F6D18B009C974B /* BusinessSelectedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */; };
 		BD88B38629377CDD003FD31F /* ProjectContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD88B38529377CDD003FD31F /* ProjectContainerView.m */; };
 		BDB56A652969A83800993F7A /* ProjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDB56A642969A83800993F7A /* ProjectModel.m */; };
 		BDD4C32F29D7236500C542C4 /* BusinessFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */; };
@@ -198,6 +200,9 @@
 		BD0C6287293A2BEF00B491F0 /* ProjectDeleteAlertView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectDeleteAlertView.h; sourceTree = "<group>"; };
 		BD0C6288293A2BEF00B491F0 /* ProjectDeleteAlertView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectDeleteAlertView.m; sourceTree = "<group>"; };
 		BD0C628A293A2C1100B491F0 /* ProjectDeleteAlertView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProjectDeleteAlertView.xib; sourceTree = "<group>"; };
+		BD20DA3929F6D18B009C974B /* BusinessSelectedTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BusinessSelectedTableViewCell.h; sourceTree = "<group>"; };
+		BD20DA3A29F6D18B009C974B /* BusinessSelectedTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BusinessSelectedTableViewCell.m; sourceTree = "<group>"; };
+		BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BusinessSelectedTableViewCell.xib; sourceTree = "<group>"; };
 		BD88B38429377CDD003FD31F /* ProjectContainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectContainerView.h; sourceTree = "<group>"; };
 		BD88B38529377CDD003FD31F /* ProjectContainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectContainerView.m; sourceTree = "<group>"; };
 		BDB56A632969A83800993F7A /* ProjectModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectModel.h; sourceTree = "<group>"; };
@@ -264,6 +269,9 @@
 				0F0C66292939A1700083D8C6 /* ContentTableViewCell.xib */,
 				BDD4C32D29D7236500C542C4 /* BusinessFooterView.h */,
 				BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */,
+				BD20DA3929F6D18B009C974B /* BusinessSelectedTableViewCell.h */,
+				BD20DA3A29F6D18B009C974B /* BusinessSelectedTableViewCell.m */,
+				BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */,
 				BDD4C33329D8303F00C542C4 /* BusinessInputTableViewCell.h */,
 				BDD4C33429D8303F00C542C4 /* BusinessInputTableViewCell.m */,
 				BDD4C33529D8303F00C542C4 /* BusinessInputTableViewCell.xib */,
@@ -709,6 +717,7 @@
 				BD0C626D2937AD4A00B491F0 /* ProjectDetailViewController.xib in Resources */,
 				0F9367B02938A36000B421AB /* ProjectFiltrateAlertView.xib in Resources */,
 				0F9367B62938B04500B421AB /* LoginViewController.xib in Resources */,
+				BD20DA3D29F6D18B009C974B /* BusinessSelectedTableViewCell.xib in Resources */,
 				0F9367A629385E8700B421AB /* ProjectTagTableViewCell.xib in Resources */,
 				0F0C66262938CE820083D8C6 /* ImagesTableViewCell.xib in Resources */,
 				BDE4728429364D4500C49D11 /* ProjectViewController.xib in Resources */,
@@ -848,6 +857,7 @@
 				BD0C62722937B0CA00B491F0 /* ProjectInfoTableViewCell.m in Sources */,
 				BD0C62662937A52F00B491F0 /* AuditCenterViewController.m in Sources */,
 				BD0C627F2938F9C100B491F0 /* ProjectDetailFooterTableViewCell.m in Sources */,
+				BD20DA3C29F6D18B009C974B /* BusinessSelectedTableViewCell.m in Sources */,
 				BDE7644029AE593C0006168B /* MultipleSelectionView.m in Sources */,
 				BDE4729929364F7500C49D11 /* GlobalConstant.m in Sources */,
 				BDE4728D29364D7B00C49D11 /* TabbarViewController.m in Sources */,

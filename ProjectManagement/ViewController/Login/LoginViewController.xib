@@ -33,11 +33,23 @@
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="AppIcon60x60" translatesAutoresizingMaskIntoConstraints="NO" id="EHY-40-jpR">
+                            <rect key="frame" x="143.5" y="118" width="88" height="88"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="88" id="1Kz-zI-uWi"/>
+                                <constraint firstAttribute="width" constant="88" id="bxP-70-ASY"/>
+                            </constraints>
+                            <userDefinedRuntimeAttributes>
+                                <userDefinedRuntimeAttribute type="string" keyPath="layer.cornerRadius" value="8"/>
+                            </userDefinedRuntimeAttributes>
+                        </imageView>
                     </subviews>
                     <color key="backgroundColor" red="0.28235294119999998" green="0.47058823529999999" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
+                        <constraint firstItem="EHY-40-jpR" firstAttribute="centerX" secondItem="Hlb-UX-EWN" secondAttribute="centerX" id="8EO-uI-P8z"/>
                         <constraint firstAttribute="height" constant="236" id="byx-to-axw"/>
                         <constraint firstItem="UJK-Vk-1Mz" firstAttribute="centerX" secondItem="Hlb-UX-EWN" secondAttribute="centerX" id="oqF-Tl-t0g"/>
+                        <constraint firstItem="EHY-40-jpR" firstAttribute="top" secondItem="UJK-Vk-1Mz" secondAttribute="bottom" constant="10" id="qGP-Az-ZL1"/>
                         <constraint firstItem="UJK-Vk-1Mz" firstAttribute="top" secondItem="Hlb-UX-EWN" secondAttribute="top" constant="64" id="zhA-o8-l6o"/>
                     </constraints>
                 </view>
@@ -390,6 +402,7 @@
         </view>
     </objects>
     <resources>
+        <image name="AppIcon60x60" width="128" height="128"/>
         <image name="ic_preview_close" width="24" height="24"/>
         <image name="ic_preview_open" width="24" height="24"/>
         <image name="ic_qq" width="40" height="40"/>
