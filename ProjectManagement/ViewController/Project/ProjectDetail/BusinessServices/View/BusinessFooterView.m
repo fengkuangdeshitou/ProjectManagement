@@ -8,6 +8,7 @@
 #import "BusinessFooterView.h"
 #import "BusinessInputTableViewCell.h"
 #import "BusinessSelectedTableViewCell.h"
+#import "BusinessIntervalTableViewCell.h"
 
 @interface BusinessFooterView ()<UITableViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
@@ -47,7 +48,7 @@
         [self.tableView registerClass:[UITableViewCell class] forCellReuseIdentifier:NSStringFromClass([UITableViewCell class])];
         [self.tableView registerNib:[UINib nibWithNibName:@"BusinessInputTableViewCell" bundle:nil] forCellReuseIdentifier:@"BusinessInputTableViewCell"];
         [self.tableView registerNib:[UINib nibWithNibName:@"BusinessSelectedTableViewCell" bundle:nil] forCellReuseIdentifier:@"BusinessSelectedTableViewCell"];
-
+        [self.tableView registerNib:[UINib nibWithNibName:@"BusinessIntervalTableViewCell" bundle:nil] forCellReuseIdentifier:@"BusinessIntervalTableViewCell"];
         
     }
     return self;
@@ -82,6 +83,9 @@
         [params setValue:obj.optionId forKey:@"optionId"];
         [params setValue:obj.problemId forKey:@"problemId"];
         [params setValue:obj.result forKey:@"result"];
+        if (obj.result2.length > 0){
+            [params setValue:obj.result2 forKey:@"result2"];
+        }
         [self.answerArray addObject:params];
     }];
     
@@ -108,30 +112,64 @@
 }
 
 - (void)textFieldDidEndEditing:(UITextField *)textField{
-    BusinessInputTableViewCell * cell = (BusinessInputTableViewCell *)textField.superview.superview;
-    NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
-    ProblemModel * model = self.dataArray[indexPath.section];
-    NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
-    NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
-    [params setValue:model.optionContent[indexPath.row].optionId forKey:@"optionId"];
-    [params setValue:textField.text forKey:@"result"];
-    NSLog(@"params=%@",params);
-    
-    [params setValue:model.Id forKey:@"problemId"];
-    if (filter.count > 0){
-        NSArray * filterAnswer = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"optionId == %@",model.optionContent[indexPath.row].optionId]];
-        if (filterAnswer.count > 0){
-            for (int i=0; i<self.answerArray.count; i++) {
-                NSDictionary * dict = self.answerArray[i];
-                if ([dict[@"optionId"] isEqualToString:model.optionContent[indexPath.row].optionId]){
-                    [self.answerArray replaceObjectAtIndex:i withObject:params];
+    UITableViewCell * tableViewCell = (UITableViewCell *)textField.superview.superview;
+    if ([tableViewCell isKindOfClass:[BusinessInputTableViewCell class]]){
+        BusinessInputTableViewCell * cell = (BusinessInputTableViewCell *)tableViewCell;
+        NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
+        ProblemModel * model = self.dataArray[indexPath.section];
+        NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
+        NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
+        [params setValue:model.optionContent[indexPath.row].optionId forKey:@"optionId"];
+        [params setValue:textField.text forKey:@"result"];
+        NSLog(@"params=%@",params);
+        
+        [params setValue:model.Id forKey:@"problemId"];
+        if (filter.count > 0){
+            NSArray * filterAnswer = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"optionId == %@",model.optionContent[indexPath.row].optionId]];
+            if (filterAnswer.count > 0){
+                for (int i=0; i<self.answerArray.count; i++) {
+                    NSDictionary * dict = self.answerArray[i];
+                    if ([dict[@"optionId"] isEqualToString:model.optionContent[indexPath.row].optionId]){
+                        [self.answerArray replaceObjectAtIndex:i withObject:params];
+                    }
                 }
+            }else{
+                [self.answerArray addObject:params];
             }
         }else{
             [self.answerArray addObject:params];
         }
     }else{
-        [self.answerArray addObject:params];
+        BusinessIntervalTableViewCell * cell = (BusinessIntervalTableViewCell *)tableViewCell;
+        NSIndexPath * indexPath = [self.tableView indexPathForCell:cell];
+        ProblemModel * model = self.dataArray[indexPath.section];
+        NSArray * filter = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"problemId == %@",model.Id]];
+        NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:filter.count > 0 ? filter.firstObject : @{}];
+        [params setValue:model.optionContent[indexPath.row].optionId forKey:@"optionId"];
+        if (textField.tag == 1000){
+            [params setValue:textField.text forKey:@"result"];
+        }else if (textField.tag == 2000){
+            [params setValue:textField.text forKey:@"result2"];
+        }
+        [params setValue:model.optionContent[indexPath.row].contrastOperator forKey:@"contrastOperator"];
+        NSLog(@"params=%@",params);
+        
+        [params setValue:model.Id forKey:@"problemId"];
+        if (filter.count > 0){
+            NSArray * filterAnswer = [self.answerArray filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"optionId == %@",model.optionContent[indexPath.row].optionId]];
+            if (filterAnswer.count > 0){
+                for (int i=0; i<self.answerArray.count; i++) {
+                    NSDictionary * dict = self.answerArray[i];
+                    if ([dict[@"optionId"] isEqualToString:model.optionContent[indexPath.row].optionId]){
+                        [self.answerArray replaceObjectAtIndex:i withObject:params];
+                    }
+                }
+            }else{
+                [self.answerArray addObject:params];
+            }
+        }else{
+            [self.answerArray addObject:params];
+        }
     }
 }
 
@@ -149,20 +187,37 @@
     return value;
 }
 
+- (NSString *)getAnswer2WithOptionId:(NSString *)optionId{
+    NSString * value = @"";
+    for (NSDictionary * dict in self.answerArray) {
+        if ([dict[@"optionId"] isEqualToString:optionId]){
+            value = [NSString stringWithFormat:@"%@",dict[@"result2"]];
+        }
+    }
+    return value;
+}
+
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     ProblemModel * model = self.dataArray[indexPath.section];
     if (model.type.intValue == 2){
         BusinessInputTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessInputTableViewCell class]) forIndexPath:indexPath];
-        cell.textfield.placeholder = model.optionContent[indexPath.row].value;
+        cell.titleLabel.text = model.optionContent[indexPath.row].value;
+        cell.textfield.placeholder = @"请输入";
         cell.textfield.delegate = self;
         cell.textfield.text = [self getAnswerWithOptionId:model.optionContent[indexPath.row].optionId];
-        UIView * leftview = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 15, 15)];
-        leftview.backgroundColor = UIColor.clearColor;
-        cell.textfield.leftView = leftview;
-        cell.textfield.leftViewMode = UITextFieldViewModeAlways;
-        cell.textfield.layer.borderColor = [UIColor colorWithHexString:@"#f6f6f6"].CGColor;
-        cell.textfield.layer.borderWidth = 1;
+        cell.textfield.borderStyle = UITextBorderStyleRoundedRect;
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        return cell;
+    }else if (model.type.intValue == 3){
+        BusinessIntervalTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessIntervalTableViewCell class]) forIndexPath:indexPath];
+        cell.value1.text = model.optionContent[indexPath.row].value;
+        cell.value2.text = model.optionContent[indexPath.row].value2;
+        cell.textfield1.delegate = self;
+        cell.textfield2.delegate = self;
+        cell.textfield1.tag = 1000;
+        cell.textfield2.tag = 2000;
+        cell.textfield1.text = [self getAnswerWithOptionId:model.optionContent[indexPath.row].optionId];
+        cell.textfield2.text = [self getAnswer2WithOptionId:model.optionContent[indexPath.row].optionId];
         return cell;
     }else{
         BusinessSelectedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessSelectedTableViewCell class]) forIndexPath:indexPath];
@@ -219,7 +274,8 @@
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath{
-    return 50;
+    ProblemModel * model = self.dataArray[indexPath.section];
+    return model.type.intValue == 1 ? 50 : 100;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section{

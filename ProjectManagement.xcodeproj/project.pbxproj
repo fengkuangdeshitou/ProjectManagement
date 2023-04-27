@@ -70,6 +70,8 @@
 		BD20DA3C29F6D18B009C974B /* BusinessSelectedTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BD20DA3A29F6D18B009C974B /* BusinessSelectedTableViewCell.m */; };
 		BD20DA3D29F6D18B009C974B /* BusinessSelectedTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */; };
 		BD88B38629377CDD003FD31F /* ProjectContainerView.m in Sources */ = {isa = PBXBuildFile; fileRef = BD88B38529377CDD003FD31F /* ProjectContainerView.m */; };
+		BD91E05629FAA5CD00309E80 /* BusinessIntervalTableViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = BD91E05429FAA5CD00309E80 /* BusinessIntervalTableViewCell.m */; };
+		BD91E05729FAA5CD00309E80 /* BusinessIntervalTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = BD91E05529FAA5CD00309E80 /* BusinessIntervalTableViewCell.xib */; };
 		BDB56A652969A83800993F7A /* ProjectModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDB56A642969A83800993F7A /* ProjectModel.m */; };
 		BDD4C32F29D7236500C542C4 /* BusinessFooterView.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */; };
 		BDD4C33229D8086100C542C4 /* ProblemModel.m in Sources */ = {isa = PBXBuildFile; fileRef = BDD4C33129D8086100C542C4 /* ProblemModel.m */; };
@@ -205,6 +207,9 @@
 		BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BusinessSelectedTableViewCell.xib; sourceTree = "<group>"; };
 		BD88B38429377CDD003FD31F /* ProjectContainerView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectContainerView.h; sourceTree = "<group>"; };
 		BD88B38529377CDD003FD31F /* ProjectContainerView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectContainerView.m; sourceTree = "<group>"; };
+		BD91E05329FAA5CD00309E80 /* BusinessIntervalTableViewCell.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BusinessIntervalTableViewCell.h; sourceTree = "<group>"; };
+		BD91E05429FAA5CD00309E80 /* BusinessIntervalTableViewCell.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = BusinessIntervalTableViewCell.m; sourceTree = "<group>"; };
+		BD91E05529FAA5CD00309E80 /* BusinessIntervalTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = BusinessIntervalTableViewCell.xib; sourceTree = "<group>"; };
 		BDB56A632969A83800993F7A /* ProjectModel.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ProjectModel.h; sourceTree = "<group>"; };
 		BDB56A642969A83800993F7A /* ProjectModel.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ProjectModel.m; sourceTree = "<group>"; };
 		BDD4C32D29D7236500C542C4 /* BusinessFooterView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BusinessFooterView.h; sourceTree = "<group>"; };
@@ -269,6 +274,9 @@
 				0F0C66292939A1700083D8C6 /* ContentTableViewCell.xib */,
 				BDD4C32D29D7236500C542C4 /* BusinessFooterView.h */,
 				BDD4C32E29D7236500C542C4 /* BusinessFooterView.m */,
+				BD91E05329FAA5CD00309E80 /* BusinessIntervalTableViewCell.h */,
+				BD91E05429FAA5CD00309E80 /* BusinessIntervalTableViewCell.m */,
+				BD91E05529FAA5CD00309E80 /* BusinessIntervalTableViewCell.xib */,
 				BD20DA3929F6D18B009C974B /* BusinessSelectedTableViewCell.h */,
 				BD20DA3A29F6D18B009C974B /* BusinessSelectedTableViewCell.m */,
 				BD20DA3B29F6D18B009C974B /* BusinessSelectedTableViewCell.xib */,
@@ -731,6 +739,7 @@
 				0F73D468293752080003FED1 /* InputTableViewCell.xib in Resources */,
 				0F9367C22938CC9800B421AB /* BusinessServicesViewController.xib in Resources */,
 				0FC55DC729BB308300283CE1 /* UserInfoTableViewCell.xib in Resources */,
+				BD91E05729FAA5CD00309E80 /* BusinessIntervalTableViewCell.xib in Resources */,
 				BD0C627B2938F92300B491F0 /* ProjectDetailFooterView.xib in Resources */,
 				0F73D46D293752200003FED1 /* SelectTableViewCell.xib in Resources */,
 				0F73D45C293747310003FED1 /* ProjectListTableViewCell.xib in Resources */,
@@ -815,6 +824,7 @@
 			files = (
 				0F9367C12938CC9800B421AB /* BusinessServicesViewController.m in Sources */,
 				BDE4728329364D4500C49D11 /* ProjectViewController.m in Sources */,
+				BD91E05629FAA5CD00309E80 /* BusinessIntervalTableViewCell.m in Sources */,
 				0FC55DC629BB308300283CE1 /* UserInfoTableViewCell.m in Sources */,
 				0F73D46129374E110003FED1 /* NewProjectViewController.m in Sources */,
 				0F9367B52938B04500B421AB /* LoginViewController.m in Sources */,

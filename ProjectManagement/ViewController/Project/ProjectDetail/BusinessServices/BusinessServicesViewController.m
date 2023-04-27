@@ -13,12 +13,12 @@
 #import "MultipleSelectionView.h"
 #import "UIView+Hud.h"
 
-@interface BusinessServicesViewController ()<UITextViewDelegate,UITableViewDataSource>
+@interface BusinessServicesViewController ()<UITextViewDelegate,UITableViewDataSource,UITextFieldDelegate>
 
 @property(nonatomic,weak)IBOutlet UITableView * tableView;
 @property(nonatomic,strong) ProjectModel * model;
 
-@property(nonatomic,weak)IBOutlet UILabel * address;
+@property(nonatomic,weak)IBOutlet UITextField * address;
 @property(nonatomic,weak)IBOutlet UIButton * selectBtn;
 @property(nonatomic,weak)IBOutlet UIButton * normalBtn;
 @property(nonatomic,weak)IBOutlet UIButton * submitBtn;
@@ -46,7 +46,6 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.type = self.detailModel.type.integerValue;
-    self.address.text = self.detailModel.detailAddress;
     self.beforHeight = (SCREEN_WIDTH-60)/3;
     self.afterHeight = self.beforHeight;
     if (self.type == 3){
@@ -67,6 +66,7 @@
         if ([result[@"data"] isKindOfClass:[NSDictionary class]]){
             self.isEvaluation = true;
             self.model = [ProjectModel mj_objectWithKeyValues:result[@"data"]];
+            self.address.text = self.model.location;
             if (self.type == 1){
                 if(self.detailModel.status.intValue == 3){
                     NSInteger submitStatus = self.model.submitStatus.intValue;
@@ -175,6 +175,14 @@
         
     }];
 }
+
+- (void)textFieldDidEndEditing:(UITextField *)textField{
+    if (textField.text.length == 0){
+        return;
+    }
+    self.model.location = textField.text;
+}
+
 - (IBAction)rectificationChangeAction:(UIButton *)sender{
     if (sender.selected){
         return;
@@ -262,19 +270,15 @@
 
 - (IBAction)submitAction:(id)sender{
     if (self.type == 1){
+        if (self.model.location.length == 0){
+            [UIHelper showToast:@"请输入项目位置" toView:self.view];
+            return;
+        }
         if (self.tableView.numberOfSections == 5){
             if (self.befor.count == 0){
                 [UIHelper showToast:@"请添加整改前照片" toView:self.view];
                 return;
             }
-//            if (self.model.conditionContent.length == 0){
-//                [UIHelper showToast:@"请输入评测情况" toView:self.view];
-//                return;
-//            }
-//            if (self.model.askFor.length == 0){
-//                [UIHelper showToast:@"请输入整改要求" toView:self.view];
-//                return;
-//            }
             if (self.after.count == 0){
                 [UIHelper showToast:@"请添加整改后照片" toView:self.view];
                 return;
@@ -298,10 +302,6 @@
                 }];
             }];
         }else{
-//            if (self.model.conditionContent.length == 0){
-//                [UIHelper showToast:@"请输入评测情况" toView:self.view];
-//                return;
-//            }
             if (self.model.basisContent.length == 0){
                 [UIHelper showToast:@"请选择评测依据" toView:self.view];
                 return;
@@ -310,18 +310,14 @@
         }
     }
     else if (self.type == 2){
+        if (self.model.location.length == 0){
+            [UIHelper showToast:@"请输入项目位置" toView:self.view];
+            return;
+        }
         if (self.befor.count == 0){
             [UIHelper showToast:@"请先选择照片" toView:self.view];
             return;
         }
-//        if (self.model.conditionContent.length == 0){
-//            [UIHelper showToast:@"请输入评测情况" toView:self.view];
-//            return;
-//        }
-//        if (self.model.suggest.length == 0){
-//            [UIHelper showToast:@"请输入整改建议" toView:self.view];
-//            return;
-//        }
         if (self.model.basisContent.length == 0){
             [UIHelper showToast:@"请选择评测依据" toView:self.view];
             return;

@@ -30,7 +30,9 @@ NS_ASSUME_NONNULL_BEGIN
 ///依据ID
 @property(nonatomic,strong) NSString * situationId;
 @property(nonatomic,strong) NSString * problemId;
+@property(nonatomic,strong) NSString * contrastOperator;
 @property(nonatomic,strong) NSString * result;
+@property(nonatomic,strong) NSString * result2;
 ///问题标题
 @property(nonatomic,strong) NSString * subject;
 ///问题类型 1 选择 2 填空
@@ -43,6 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * cutOff;
 ///选项或输入描述
 @property(nonatomic,strong) NSString * value;
+@property(nonatomic,strong) NSString * value2;
 ///选项或输入描述ID
 @property(nonatomic,strong) NSString * optionId;
 ///是否合格标识

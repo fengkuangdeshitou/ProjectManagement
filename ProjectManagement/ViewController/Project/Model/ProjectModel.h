@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic,strong) NSString * addressName;
 @property(nonatomic,strong) NSString * address;
 @property(nonatomic,strong) NSString * detailAddress;
+@property(nonatomic,strong) NSString * location;
 
 /// 0不合格 1合格
 @property(nonatomic,strong) NSString * resultContrast;
