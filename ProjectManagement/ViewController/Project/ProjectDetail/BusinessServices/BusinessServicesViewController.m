@@ -120,10 +120,10 @@
             NSString * basisContent = @"";
             for (int i=0; i<modelArray.count; i++) {
                 ProjectModel * model = modelArray[i];
-                basisContent = [NSString stringWithFormat:@"%@%@\n%@\n\n",basisContent,model.serialNumber,model.content];
+                basisContent = [NSString stringWithFormat:@"%@%@\n",basisContent,model.name];
                 [idArray addObject:model.Id];
             }
-            basisContent = [basisContent substringToIndex:basisContent.length-2];
+            basisContent = [basisContent substringToIndex:basisContent.length-1];
             self.model.basisContent = basisContent;
             self.model.basisId = [idArray componentsJoinedByString:@","];
             [self.tableView reloadData];
@@ -132,7 +132,7 @@
             if (self.model.basisId){
                 NSArray * filter = [self.detailModel.subentryClassesSecondLevelEvaluation filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"Id = %@",self.subentryClassesSecondLevel]];
                 ProjectModel * model = filter.firstObject;
-                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":model.evaluation.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
+                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":model.evaluation.subentryClassesSecondLevel,@"isAll":@"1"} success:^(NSDictionary * _Nonnull result) {
                     NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                     NSMutableArray * idArray = [[NSMutableArray alloc] init];
                     NSMutableArray * nameArray = [[NSMutableArray alloc] init];
@@ -350,7 +350,7 @@
     if (textView.tag == 1){
         if (textView.text.length == 0){
             if (!self.pcProjectEvaluationBasis){
-                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.subentryClassesSecondLevel} success:^(NSDictionary * _Nonnull result) {
+                [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.subentryClassesSecondLevel,@"isAll":@"1"} success:^(NSDictionary * _Nonnull result) {
                     NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                     NSMutableArray * array = [[NSMutableArray alloc] init];
                     [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {

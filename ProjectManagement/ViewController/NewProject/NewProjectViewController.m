@@ -249,11 +249,10 @@
             [UIHelper showToast:@"请选择项目分项二级类别" toView:self.view];
             return false;
         }
-        [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.model.subentryClassesSecondLevelId} success:^(NSDictionary * _Nonnull result) {
+        [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":self.model.subentryClassesSecondLevelId,@"isAll":@"0"} success:^(NSDictionary * _Nonnull result) {
             NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
             NSMutableArray * array = [[NSMutableArray alloc] init];
             [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
                 [array addObject:obj];
             }];
             self.projectEvaluationSituation = array;
@@ -371,15 +370,17 @@
             self.model.basisId = [idArray componentsJoinedByString:@","];
             __block NSString * evaluationSituation = @"";
             [self.projectEvaluationSituation enumerateObjectsUsingBlock:^(ProjectModel * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                evaluationSituation = [evaluationSituation stringByAppendingFormat:@"%@", [NSString stringWithFormat:@"%@-%@\n%@\n\n",obj.name,obj.serialNumber,obj.content]];
+                evaluationSituation = [evaluationSituation stringByAppendingFormat:@"%@", [NSString stringWithFormat:@"%@\n\n",obj.name]];
             }];
-            evaluationSituation = [evaluationSituation substringToIndex:evaluationSituation.length-2];
+            evaluationSituation = [evaluationSituation substringToIndex:evaluationSituation.length];
             NSMutableDictionary * params = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[textField.tag+1]];
             [params setValue:evaluationSituation forKey:@"value"];
             [self.dataArray replaceObjectAtIndex:textField.tag+1 withObject:params];
             [self.tableView reloadRowsAtIndexPaths:@[[NSIndexPath indexPathForRow:textField.tag+1 inSection:0]] withRowAnimation:UITableViewRowAnimationNone];
         }
-        textField.text = [contentArray componentsJoinedByString:@","];
+        if (textField.tag != 13){
+            textField.text = [contentArray componentsJoinedByString:@","];
+        }
     };
     [picker show];
     [picker.alertView addSubview:selection];

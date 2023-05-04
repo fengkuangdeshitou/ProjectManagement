@@ -195,7 +195,7 @@
             for (ProjectModel * model in self.model.subentryClassesSecondLevelEvaluation) {
                 [idArray addObject:model.Id];
             }
-            [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":[idArray componentsJoinedByString:@","]} success:^(NSDictionary * _Nonnull result) {
+            [APIRequest.shareInstance getUrl:ProjectEvaluationSituation params:@{@"ids":[idArray componentsJoinedByString:@","],@"isAll":@"1"} success:^(NSDictionary * _Nonnull result) {
                 NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                 NSMutableArray * array = [[NSMutableArray alloc] init];
                 [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
