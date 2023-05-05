@@ -199,7 +199,7 @@
                 NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                 NSMutableArray * array = [[NSMutableArray alloc] init];
                 [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                    obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
+//                    obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
                     [array addObject:obj];
                 }];
                 self.pcProjectEvaluationBasis = array;

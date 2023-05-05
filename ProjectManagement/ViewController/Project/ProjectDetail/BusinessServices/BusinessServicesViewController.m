@@ -138,7 +138,8 @@
                     NSMutableArray * nameArray = [[NSMutableArray alloc] init];
     
                     [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        [nameArray addObject:[NSString stringWithFormat:@"%@\n%@",obj.serialNumber,obj.content]];
+//                        [nameArray addObject:[NSString stringWithFormat:@"%@\n%@",obj.serialNumber,obj.content]];
+                        [nameArray addObject:[NSString stringWithFormat:@"%@\n",obj.name]];
                         [idArray addObject:obj.Id];
                     }];
                     if (modelArray.count > 0){
@@ -354,7 +355,7 @@
                     NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                     NSMutableArray * array = [[NSMutableArray alloc] init];
                     [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-                        obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
+//                        obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
                         [array addObject:obj];
                     }];
                     self.pcProjectEvaluationBasis = array;
