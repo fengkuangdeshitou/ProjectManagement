@@ -28,10 +28,10 @@
     [[BMKLocationAuth sharedInstance] setAgreePrivacy:YES];
     [BMKMapManager setAgreePrivacy:YES];
 
-    [[BMKLocationAuth sharedInstance] checkPermisionWithKey:@"xDS2TC9FHbggcG9ixgMPLhnOdt3bFveR" authDelegate:self];
+    [[BMKLocationAuth sharedInstance] checkPermisionWithKey:@"urhw5P2HpeS0cTBTKfG1T9ayCAOYGEuT" authDelegate:self];
     BMKMapManager *mapManager = [[BMKMapManager alloc] init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
-    BOOL ret = [mapManager start:@"xDS2TC9FHbggcG9ixgMPLhnOdt3bFveR"  generalDelegate:nil];
+    BOOL ret = [mapManager start:@"urhw5P2HpeS0cTBTKfG1T9ayCAOYGEuT"  generalDelegate:nil];
     if (!ret) {
         NSLog(@"启动引擎失败");
     }
