@@ -222,6 +222,7 @@
     }else{
         BusinessSelectedTableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:NSStringFromClass([BusinessSelectedTableViewCell class]) forIndexPath:indexPath];
         cell.titleLabel.text = model.optionContent[indexPath.row].value;
+        cell.icon_left.constant = self.index*25+35;
         if (model.optionContent[indexPath.row].isSelected){
             cell.icon.image = [UIImage imageNamed:@"ic_q_选中"];
         }else{
@@ -302,12 +303,12 @@
     CGFloat height = [model.subject boundingRectWithSize:CGSizeMake(SCREEN_WIDTH-50, CGFLOAT_MAX) options:NSStringDrawingUsesLineFragmentOrigin attributes:@{NSFontAttributeName:[UIFont systemFontOfSize:14]} context:nil].size.height+30;
     UIView * header = [[UIView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, height)];
     
-    UIView * view = [[UIView alloc] initWithFrame:CGRectMake(15, height/2-4, 8, 8)];
+    UIView * view = [[UIView alloc] initWithFrame:CGRectMake(self.index*25+15, height/2-4, 8, 8)];
     view.backgroundColor = [UIColor colorWithHexString:COLOR_MAIN_COLOR];
     view.layer.cornerRadius = 4;
     [header addSubview:view];
     
-    UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake(35, 0, SCREEN_WIDTH-50, height)];
+    UILabel * title = [[UILabel alloc] initWithFrame:CGRectMake(self.index*25+35, 0, SCREEN_WIDTH-55-self.index*25, height)];
     title.text = model.subject;
     title.numberOfLines = 0;
     title.font = [UIFont systemFontOfSize:14 weight:UIFontWeightMedium];
@@ -325,6 +326,7 @@
     if (model.isSelected){
         BusinessFooterView * footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 0, SCREEN_WIDTH, 200)];
         footer.clipsToBounds = true;
+        footer.index = self.index+1;
         footer.canEdit = self.canEdit;
         footer.dataArray = model.childProblems;
         footer.tableViewContentHeightCompletion = ^(CGFloat height){

@@ -213,6 +213,7 @@
     [pcEvaluation setValue:[NSString stringWithFormat:@"%ld",self.type] forKey:@"type"];
     [pcEvaluation setValue:self.model.projectId forKey:@"projectId"];
     [pcEvaluation setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
+    [pcEvaluation setValue:self.model.location forKey:@"location"];
     if (self.type == 1){
         if (self.detailModel.status.intValue == 3 && self.model.resultContrast.intValue == 0){
             [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
@@ -220,9 +221,11 @@
         if (self.model.submitStatus.intValue == 3){
             [pcEvaluation setValue:@"4" forKey:@"submitStatus"];
         }
-        if (self.model.afterUrl.length > 0){
+        if (self.model.beforeUrl.length > 0){
             [pcEvaluation setValue:@"1" forKey:@"abarbeitung"];
             [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
+        }
+        if (self.model.afterUrl.length > 0){
             [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
         }
     }
@@ -280,10 +283,10 @@
                 [UIHelper showToast:@"请添加整改前照片" toView:self.view];
                 return;
             }
-            if (self.after.count == 0){
-                [UIHelper showToast:@"请添加整改后照片" toView:self.view];
-                return;
-            }
+//            if (self.after.count == 0){
+//                [UIHelper showToast:@"请添加整改后照片" toView:self.view];
+//                return;
+//            }
             if (self.model.basisContent.length == 0){
                 [UIHelper showToast:@"请选择评测依据" toView:self.view];
                 return;
@@ -292,14 +295,17 @@
             [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
                 [self uploadImages:imageArray completion:^(NSString * urls) {
                     self.model.beforeUrl = urls;
-                    [self.view showHUDToast:@"上传图片中"];
-                    [self.after hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
-                        [self uploadImages:imageArray completion:^(NSString * urls) {
-                            self.model.afterUrl = urls;
-                            [self uploadParamsData];
+                    if (self.after.count > 0){
+                        [self.view showHUDToast:@"上传图片中"];
+                        [self.after hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
+                            [self uploadImages:imageArray completion:^(NSString * urls) {
+                                self.model.afterUrl = urls;
+                                [self uploadParamsData];
+                            }];
                         }];
-                    }];
-                    
+                    }else{
+                        [self uploadParamsData];
+                    }
                 }];
             }];
         }else{
@@ -355,7 +361,6 @@
                     NSArray * modelArray = [ProjectModel mj_objectArrayWithKeyValuesArray:result[@"data"]];
                     NSMutableArray * array = [[NSMutableArray alloc] init];
                     [modelArray enumerateObjectsUsingBlock:^(ProjectModel *  _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
-//                        obj.name = [NSString stringWithFormat:@"%@-%@",obj.name,obj.serialNumber];
                         [array addObject:obj];
                     }];
                     self.pcProjectEvaluationBasis = array;
@@ -620,6 +625,7 @@
         [footerView addSubview:label];
         if(!self.footer){
             self.footer = [[BusinessFooterView alloc] initWithFrame:CGRectMake(0, 37, SCREEN_WIDTH, self.footer.tableView.contentSize.height == 0 ? 200 : self.footer.tableView.contentSize.height)];
+            self.footer.index = 0;
         }
         self.footer.canEdit = self.canEdit;
         self.footer.dataArray = self.problemArray;

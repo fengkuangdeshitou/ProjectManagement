@@ -41,6 +41,7 @@
             <viewLayoutGuide key="safeArea" id="aW0-zy-SZf"/>
             <connections>
                 <outlet property="icon" destination="OeW-81-UnS" id="Zd4-6L-qi8"/>
+                <outlet property="icon_left" destination="D7h-xv-YT4" id="8hf-8I-Kfy"/>
                 <outlet property="titleLabel" destination="pYJ-Ee-ot3" id="fie-We-jjI"/>
             </connections>
             <point key="canvasLocation" x="39.694656488549619" y="41.549295774647888"/>
