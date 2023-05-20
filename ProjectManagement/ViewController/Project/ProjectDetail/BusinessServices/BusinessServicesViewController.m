@@ -537,7 +537,7 @@
             if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue < 3){
                 return 2;
             }else{
-                if (self.model.rectificationRequest.count > 0){
+                if (self.model.rectificationRequest.count > 0) {
                     return 5;
                 }else{
                     return 2;
@@ -548,7 +548,8 @@
         if (!self.isEvaluation || self.model.resultContrast.intValue == 1){
             return 2;
         }else{
-            if (self.model.submitStatus.intValue == 3){
+//            if (self.model.submitStatus.intValue == 3){
+            if (self.model.rectificationRequest.count > 0) {
                 return 4;
             }else{
                 return 2;
