@@ -31,6 +31,7 @@
     // Initialization code
     self.manager = [HXPhotoManager managerWithType:HXPhotoManagerSelectedTypePhoto];
     self.manager.configuration.photoCanEdit = false;
+    self.manager.configuration.photoMaxNum = 20;
     self.photoView = [[HXPhotoView alloc] initWithFrame:CGRectMake(15, 47, SCREEN_WIDTH-30, 0) manager:self.manager];
     self.photoView.addImageName = @"addImage";
     self.photoView.lineCount = 3;
@@ -68,7 +69,12 @@
     if (!images){
         return;
     }
-    if (!self.flag){
+    if (images.length == 0){
+        [self.manager clearSelectedList];
+        [self.photoView refreshView];
+        return;
+    }
+//    if (!self.flag){
         self.flag = true;
         [self.manager clearSelectedList];
         NSArray * array = [images componentsSeparatedByString:@","];
@@ -79,7 +85,7 @@
         }
         [self.manager addCustomAssetModel:modelArray];
         [self.photoView refreshView];
-    }
+//    }
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated {

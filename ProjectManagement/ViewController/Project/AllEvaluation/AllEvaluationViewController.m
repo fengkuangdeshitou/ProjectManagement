@@ -67,7 +67,7 @@
     submit.titleLabel.font = [UIFont systemFontOfSize:12 weight:UIFontWeightMedium];
     [submit setTitleColor:UIColor.whiteColor forState:UIControlStateNormal];
     [submit setImage:[UIImage imageNamed:@"ic_submit"] forState:UIControlStateNormal];
-    [submit addTarget:self action:@selector(submitAction) forControlEvents:UIControlEventTouchUpInside];
+    [submit addTarget:self action:@selector(submitActionAlert) forControlEvents:UIControlEventTouchUpInside];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:submit];
     [self getProjectDetail];
     
@@ -80,6 +80,19 @@
     } failure:^(NSString * _Nonnull errorMsg) {
         
     }];
+}
+
+- (void)submitActionAlert{
+    UIAlertController * alert = [UIAlertController alertControllerWithTitle:@"是否确认提交审核" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertAction * cancel = [UIAlertAction actionWithTitle:@"否" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        
+    }];
+    UIAlertAction * done = [UIAlertAction actionWithTitle:@"是" style:UIAlertActionStyleDestructive handler:^(UIAlertAction * _Nonnull action) {
+        [self submitAction];
+    }];
+    [alert addAction:cancel];
+    [alert addAction:done];
+    [self presentViewController:alert animated:true completion:nil];
 }
 
 - (void)submitAction{

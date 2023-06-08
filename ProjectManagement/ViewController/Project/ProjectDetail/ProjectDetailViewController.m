@@ -92,7 +92,7 @@
         if (modelArray.count > 0){
             for (int i=0; i<modelArray.count; i++) {
                 ProjectModel * model = modelArray[i];
-                self.basisContent = [NSString stringWithFormat:@"%@%@-%@\n%@\n\n",self.basisContent,model.name,model.serialNumber,model.content];
+                self.basisContent = [NSString stringWithFormat:@"%@%@\n\n",self.basisContent,model.name];
             }
             self.basisContent = [self.basisContent substringToIndex:self.basisContent.length-1];
             NSMutableDictionary * dict = [[NSMutableDictionary alloc] initWithDictionary:self.dataArray[self.dataArray.count-2]];

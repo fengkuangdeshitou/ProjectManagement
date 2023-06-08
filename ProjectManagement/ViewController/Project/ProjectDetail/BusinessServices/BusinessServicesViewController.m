@@ -79,10 +79,10 @@
                     }else if (submitStatus == 3){
                         self.canEdit = self.model.resultContrast.intValue == 0;
                     }else{
-                        self.canEdit = false;
+                        self.canEdit = true;
                     }
                 }else{
-                    self.canEdit = self.model.resultContrast.intValue == 0 && self.model.afterUrl.length == 0;
+                    self.canEdit = self.model.resultContrast.intValue == 0;
                 }
             }else{
                 if (self.detailModel.status.intValue == 3){
@@ -214,6 +214,9 @@
     [pcEvaluation setValue:self.model.projectId forKey:@"projectId"];
     [pcEvaluation setValue:self.subentryClassesSecondLevel forKey:@"subentryClassesSecondLevel"];
     [pcEvaluation setValue:self.model.location forKey:@"location"];
+    [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
+    [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
+
     if (self.type == 1){
         if (self.detailModel.status.intValue == 3 && self.model.resultContrast.intValue == 0){
             [pcEvaluation setValue:@"3" forKey:@"submitStatus"];
@@ -223,10 +226,6 @@
         }
         if (self.model.beforeUrl.length > 0){
             [pcEvaluation setValue:@"1" forKey:@"abarbeitung"];
-            [pcEvaluation setValue:self.model.beforeUrl forKey:@"beforeUrl"];
-        }
-        if (self.model.afterUrl.length > 0){
-            [pcEvaluation setValue:self.model.afterUrl forKey:@"afterUrl"];
         }
     }
     if (self.type == 2){
@@ -279,10 +278,10 @@
             return;
         }
         if (self.tableView.numberOfSections == 5){
-            if (self.befor.count == 0){
-                [UIHelper showToast:@"请添加整改前照片" toView:self.view];
-                return;
-            }
+//            if (self.befor.count == 0){
+//                [UIHelper showToast:@"请添加整改前照片" toView:self.view];
+//                return;
+//            }
 //            if (self.after.count == 0){
 //                [UIHelper showToast:@"请添加整改后照片" toView:self.view];
 //                return;
@@ -291,23 +290,30 @@
                 [UIHelper showToast:@"请选择评测依据" toView:self.view];
                 return;
             }
-            [self.view showHUDToast:@"上传图片中"];
-            [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
-                [self uploadImages:imageArray completion:^(NSString * urls) {
-                    self.model.beforeUrl = urls;
-                    if (self.after.count > 0){
-                        [self.view showHUDToast:@"上传图片中"];
-                        [self.after hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
-                            [self uploadImages:imageArray completion:^(NSString * urls) {
-                                self.model.afterUrl = urls;
-                                [self uploadParamsData];
+            if (self.befor.count > 0){
+                [self.view showHUDToast:@"上传图片中"];
+                [self.befor hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
+                    [self uploadImages:imageArray completion:^(NSString * urls) {
+                        self.model.beforeUrl = urls;
+                        [self.view hiddenHUD];
+                        if (self.after.count > 0){
+                            [self.view showHUDToast:@"上传图片中"];
+                            [self.after hx_requestImageWithOriginal:true completion:^(NSArray<UIImage *> * _Nullable imageArray, NSArray<HXPhotoModel *> * _Nullable errorArray) {
+                                [self uploadImages:imageArray completion:^(NSString * urls) {
+                                    self.model.afterUrl = urls;
+                                    [self uploadParamsData];
+                                }];
                             }];
-                        }];
-                    }else{
-                        [self uploadParamsData];
-                    }
+                        }else{
+                            [self uploadParamsData];
+                        }
+                    }];
                 }];
-            }];
+            }else{
+                self.model.beforeUrl = @"";
+                self.model.afterUrl = @"";
+                [self uploadParamsData];
+            }
         }else{
             if (self.model.basisContent.length == 0){
                 [UIHelper showToast:@"请选择评测依据" toView:self.view];
@@ -446,15 +452,26 @@
             }
         };
         cell.updateFrame = ^(CGFloat imageHeight,NSInteger section){
-            if (section == 0){
-                weakSelf.beforHeight = imageHeight;
-            }else{
-                weakSelf.afterHeight = imageHeight;
+            if (imageHeight > 0){
+                if (section == 0 || section == 2){
+                    if (weakSelf.beforHeight != imageHeight){
+                        weakSelf.beforHeight = imageHeight;
+                        [UIView performWithoutAnimation:^{
+                            [tableView beginUpdates];
+                            [tableView endUpdates];
+                        }];
+                    }
+                    
+                }else{
+                    if (weakSelf.afterHeight != imageHeight){
+                        weakSelf.afterHeight = imageHeight;
+                        [UIView performWithoutAnimation:^{
+                            [tableView beginUpdates];
+                            [tableView endUpdates];
+                        }];
+                    }
+                }
             }
-            [UIView performWithoutAnimation:^{
-                [tableView beginUpdates];
-                [tableView endUpdates];
-            }];
         };
         if (indexPath.section == 0){
             if (self.detailModel.status.intValue == 3 && self.model.submitStatus.intValue != 3){
@@ -468,32 +485,40 @@
             }
         }else if (indexPath.section == 2){
             if (self.type == 1){
+                cell.images = @"";
                 if (self.model.resultContrast.intValue == 1){
                     if (self.model.beforeUrl.length > 0){
                         cell.images = self.model.beforeUrl;
                     }
                 }else{
-                    if (self.model.submitStatus.intValue == 4){
+                    if (self.model.beforeUrl.length > 0){
                         cell.images = self.model.beforeUrl;
                     }
-                    if (self.model.submitStatus.intValue < 3 && self.model.beforeUrl.length > 0){
-                        cell.images = self.model.beforeUrl;
-                    }
+//                    if (self.model.submitStatus.intValue == 4){
+//                        cell.images = self.model.beforeUrl;
+//                    }
+//                    if (self.model.submitStatus.intValue < 3 && self.model.beforeUrl.length > 0){
+//                        cell.images = self.model.beforeUrl;
+//                    }
                 }
             }
         }else if (indexPath.section == 4){
             if (self.type == 1){
+                cell.images = @"";
                 if (self.model.resultContrast.intValue == 1){
-                    if (self.model.beforeUrl.length > 0){
+                    if (self.model.afterUrl.length > 0){
                         cell.images = self.model.afterUrl;
                     }
                 }else{
-                    if (self.model.submitStatus.intValue == 4){
+                    if (self.model.afterUrl.length > 0){
                         cell.images = self.model.afterUrl;
                     }
-                    if (self.model.submitStatus.intValue < 3 && self.model.afterUrl.length > 0){
-                        cell.images = self.model.afterUrl;
-                    }
+//                    if (self.model.submitStatus.intValue == 4){
+//                        cell.images = self.model.afterUrl;
+//                    }
+//                    if (self.model.submitStatus.intValue < 3 && self.model.afterUrl.length > 0){
+//                        cell.images = self.model.afterUrl;
+//                    }
                 }
             }
         }
